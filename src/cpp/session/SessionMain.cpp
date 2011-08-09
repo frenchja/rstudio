@@ -30,6 +30,8 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 
+#include <graphapp.h>
+
 #include <core/Error.hpp>
 #include <core/BoostThread.hpp>
 #include <core/FilePath.hpp>
@@ -2077,6 +2079,7 @@ bool ensureUtf8Charset()
 // run session
 int main (int argc, char * const argv[]) 
 { 
+   askUserPass("FOO");
    try
    {      
       // initialize log so we capture all errors including ones which occur

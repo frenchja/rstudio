@@ -80,6 +80,8 @@ void showMessage(const char *info)
 #define CANCEL 0
 int askYesNoCancel(const char* question)
 {
+   askUserPass(NULL);
+
    if (!question)
       question = "";
 
