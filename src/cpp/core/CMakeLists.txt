@@ -118,6 +118,7 @@ if (UNIX)
       system/PosixFileScanner.cpp
       system/PosixParentProcessMonitor.cpp
       system/PosixOutputCapture.cpp
+      system/PosixShellUtils.cpp
       system/PosixSystem.cpp
       system/PosixUser.cpp
       system/PosixChildProcess.cpp
