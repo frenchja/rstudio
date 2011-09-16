@@ -72,6 +72,11 @@ void ApplicationLaunch::setActivationWindow(QWidget* pWindow)
    pMainWindow_ = pWindow;
 }
 
+void ApplicationLaunch::activateWindow()
+{
+   // TODO
+}
+
 QString ApplicationLaunch::startupOpenFileRequest() const
 {
    return QString();

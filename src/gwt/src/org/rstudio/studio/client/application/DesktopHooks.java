@@ -122,11 +122,12 @@ public class DesktopHooks
       if (file.isDirectory())
          return;
       
-      // special handling for open an Rproject on top of an 
-      // an existing session
+      // you can't open a project on top of another project
+      // via a file-association (rather, a new instance of 
+      // RStudio is run for the associated project)
       if (file.getExtension().equalsIgnoreCase(".rproj"))
       {
-         events_.fireEvent(new OpenProjectFileEvent(file));
+         return;
       }
       else
       {

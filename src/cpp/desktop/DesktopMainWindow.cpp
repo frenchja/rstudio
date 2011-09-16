@@ -90,7 +90,6 @@ void MainWindow::onWorkbenchInitialized()
    quitConfirmed_ = false;
 
    // see if there is a project dir to display in the titlebar
-   // if there are unsaved changes then resolve them before exiting
    QVariant vProjectDir = webView()->page()->mainFrame()->evaluateJavaScript(
          QString::fromAscii("window.desktopHooks.getActiveProjectDir()"));
    QString projectDir = vProjectDir.toString();

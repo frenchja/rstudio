@@ -112,8 +112,13 @@ Error SessionLauncher::launchFirstSession(const QString& filename,
                          this, SLOT(onRSessionExited()));
 
 
-
+   // show the window
    pMainWindow_->show();
+
+   // activate the window
+   pAppLaunch->activateWindow();
+
+   // load the url
    pMainWindow_->loadUrl(url);
 
    return Success();
