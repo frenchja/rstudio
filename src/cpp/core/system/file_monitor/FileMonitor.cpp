@@ -246,7 +246,11 @@ void processFileRemoved(tree<FileInfo>::iterator parentIt,
       }
       else
       {
-         pFileChanges->push_back(fileChange);
+         // use the previous FileInfo for the event payload (since the
+         // passed FileInfo might not have a correct value for isDirectory
+         // since we couldn't read it from the filesystem)
+         pFileChanges->push_back(FileChangeEvent(FileChangeEvent::FileRemoved,
+                                                 *remIt));
       }
 
       // remove it from the tree
@@ -472,12 +476,13 @@ CallbackQueue& callbackQueue()
 
 void checkForInput()
 {
-   // wait for up to 100ms for new input (we can't block indefinitely because this
+   // wait for up to 250ms for new input (we can't block indefinitely because this
    // code runs within the context of the monitoring thread which also needs to free
    // up so that filesystem change notifications can be received)
    RegistrationCommand command;
-   while (registrationCommandQueue().deque(&command,
-                                           boost::posix_time::milliseconds(100)))
+   while (registrationCommandQueue().deque(
+                              &command,
+                              boost::posix_time::milliseconds(250)))
    {
       switch(command.type())
       {
