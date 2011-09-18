@@ -20,8 +20,6 @@
 
 #include <boost/scoped_ptr.hpp>
 
-class QtSingleApplication;
-
 namespace desktop {
 
 class ApplicationLaunch : public QWidget
@@ -31,8 +29,10 @@ public:
    static void init(QString appname,
                     int& argc,
                     char* argv[],
-                    boost::scoped_ptr<QtSingleApplication>* ppApp,
+                    boost::scoped_ptr<QApplication>* ppApp,
                     boost::scoped_ptr<ApplicationLaunch>* ppAppLaunch);
+
+   void initInstanceTracking(const QString &appId = QString());
 
    void setActivationWindow(QWidget* pWindow);
 

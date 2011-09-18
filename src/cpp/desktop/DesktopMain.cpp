@@ -198,7 +198,7 @@ int main(int argc, char* argv[])
                                   logPath);
 
 
-      boost::scoped_ptr<QtSingleApplication> pApp;
+      boost::scoped_ptr<QApplication> pApp;
       boost::scoped_ptr<ApplicationLaunch> pAppLaunch;
       ApplicationLaunch::init(QString::fromAscii("RStudio"),
                               argc,
@@ -230,7 +230,7 @@ int main(int argc, char* argv[])
          instanceId = filename.toLower();
 
       // call sysInit on the app to initialize multi-instance tracking
-      pApp->initInstanceTracking(instanceId);
+      pAppLaunch->initInstanceTracking(instanceId);
 
       // try to activate existing instance...exit if we do
       if (pAppLaunch->sendMessage(filename))
