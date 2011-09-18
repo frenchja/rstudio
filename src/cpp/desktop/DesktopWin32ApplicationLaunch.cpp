@@ -67,6 +67,11 @@ void ApplicationLaunch::init(QString,
    ppAppLaunch->reset(new ApplicationLaunch());
 }
 
+void ApplicationLaunch::initInstanceTracking(const QString &appId)
+{
+
+}
+
 void ApplicationLaunch::setActivationWindow(QWidget* pWindow)
 {
    pMainWindow_ = pWindow;
