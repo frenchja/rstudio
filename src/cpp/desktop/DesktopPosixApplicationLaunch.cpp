@@ -15,6 +15,16 @@
 
 #include "DesktopPosixApplication.hpp"
 
+// TODO: instance lock must be assumed and released on switch projects
+
+// TODO: open in new window command (needs to use full cmd line on osx)
+
+// TODO: switch project command (including open) must first check for
+// a running project and if running activate it
+
+// TODO: sort out shared access to userScratchPath
+
+// TODO: update prefs, etc. accross all running instances
 
 namespace desktop {
 
