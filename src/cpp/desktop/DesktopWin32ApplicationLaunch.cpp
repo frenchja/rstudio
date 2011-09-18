@@ -16,6 +16,8 @@
 
 #include <QWidget>
 
+#include <core/Hash.hpp>
+
 #include "DesktopOptions.hpp"
 
 /*
@@ -46,6 +48,17 @@ UINT wmGetMainWindowHandle()
    return msg;
 }
 
+void activate(HWND hWnd)
+{
+   HWND hwndPopup = ::GetLastActivePopup(hWnd);
+   if (::IsWindow(hwndPopup))
+      hWnd = hwndPopup;
+   ::SetForegroundWindow(hWnd);
+   if (::IsIconic(hWnd))
+      ::ShowWindow(hWnd, SW_RESTORE);
+}
+
+
 } // anonymous namespace
 
 ApplicationLaunch::ApplicationLaunch() :
@@ -69,7 +82,10 @@ void ApplicationLaunch::init(QString,
 
 void ApplicationLaunch::initInstanceTracking(const QString &appId)
 {
-
+   // set our window title based on the base guid + hash of appId
+   setWindowTitle(
+         QString::fromAscii(WINDOW_TITLE) +
+         QString::fromStdString(core::hash::crc32Hash(appId.toStdString())));
 }
 
 void ApplicationLaunch::setActivationWindow(QWidget* pWindow)
@@ -79,7 +95,7 @@ void ApplicationLaunch::setActivationWindow(QWidget* pWindow)
 
 void ApplicationLaunch::activateWindow()
 {
-   // TODO
+   activate(winId());
 }
 
 QString ApplicationLaunch::startupOpenFileRequest() const
@@ -89,11 +105,12 @@ QString ApplicationLaunch::startupOpenFileRequest() const
 
 namespace {
 
-bool acquireLock()
+bool acquireLock(const QString& windowTitle)
 {
    // The file is implicitly released/deleted when the process exits
 
-   QString lockFilePath = QDir::temp().absoluteFilePath(QString::fromAscii("rstudio.lock"));
+   QString lockFilePath = QDir::temp().absoluteFilePath(
+                              QString::fromAscii("rstudio.lock") + windowTitle);
    HANDLE hFile = ::CreateFileW(lockFilePath.toStdWString().c_str(),
                                 GENERIC_WRITE,
                                 0, // exclusive access
@@ -115,13 +132,16 @@ bool acquireLock()
 
 bool ApplicationLaunch::sendMessage(QString filename)
 {
-   if (acquireLock())
+   if (acquireLock(windowTitle()))
       return false;
 
    HWND hwndAppLaunch = NULL;
    do
    {
-      hwndAppLaunch = ::FindWindowEx(HWND_MESSAGE, hwndAppLaunch, NULL, WINDOW_TITLE);
+      hwndAppLaunch = ::FindWindowEx(HWND_MESSAGE,
+                                     hwndAppLaunch,
+                                     NULL,
+                                     windowTitle().toAscii());
    } while (hwndAppLaunch == winId()); // Ignore ourselves
 
    if (::IsWindow(hwndAppLaunch))
@@ -132,12 +152,7 @@ bool ApplicationLaunch::sendMessage(QString filename)
                                                        NULL));
       if (::IsWindow(hwnd))
       {
-         HWND hwndPopup = ::GetLastActivePopup(hwnd);
-         if (::IsWindow(hwndPopup))
-            hwnd = hwndPopup;
-         ::SetForegroundWindow(hwnd);
-         if (::IsIconic(hwnd))
-            ::ShowWindow(hwnd, SW_RESTORE);
+         activate(hwnd);
 
          if (!filename.isEmpty())
          {
