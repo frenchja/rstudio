@@ -143,7 +143,28 @@ void QtSingleApplication::initInstanceTracking(const QString &appId)
 {
     actWin = 0;
     peer = new QtLocalPeer(this, appId);
-    connect(peer, SIGNAL(messageReceived(const QString&)), SIGNAL(messageReceived(const QString&)));
+    connect(peer, SIGNAL(messageReceived(const QString&)),
+            this, SIGNAL(messageReceived(const QString&)));
+}
+
+void QtSingleApplication::resetInstanceId(const QString& instanceId)
+{
+   if (peer && (instanceId != peer->applicationId()))
+   {
+      // delete the peer and disconnect its events
+      peer->disconnect();
+      delete peer;
+
+      // create a new peer and hookup to its messageReceived event
+      peer = new QtLocalPeer(this, instanceId);
+      connect(peer, SIGNAL(messageReceived(const QString&)),
+              this, SIGNAL(messageReceived(const QString&)));
+      connect(peer, SIGNAL(messageReceived(const QString&)),
+              this, SLOT(activateWindow()));
+
+      // make sure we are listening
+      peer->isClient();
+   }
 }
 
 

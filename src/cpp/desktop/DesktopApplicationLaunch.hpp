@@ -20,7 +20,13 @@
 
 #include <boost/scoped_ptr.hpp>
 
+namespace core {
+   class FilePath;
+}
+
 namespace desktop {
+
+class MainWindow;
 
 class ApplicationLaunch : public QWidget
 {
@@ -34,14 +40,17 @@ public:
 
    void initInstanceTracking(const QString &appId = QString());
 
-   void setActivationWindow(QWidget* pWindow);
+   void setActivationWindow(MainWindow* pWindow);
 
    void activateWindow();
 
    QString startupOpenFileRequest() const;
 
+public:
+   static QString instanceIdFromFilename(const QString& filename);
+
 protected:
-    explicit ApplicationLaunch();
+    ApplicationLaunch();
 #ifdef _WIN32
     bool winEvent(MSG *message, long *result);
 #endif
@@ -51,9 +60,10 @@ signals:
 
 public slots:
     bool sendMessage(QString filename);
+    void onWorkbenchInitialized(QString projectFile);
 
 private:
-    QWidget* pMainWindow_;
+    MainWindow* pMainWindow_;
 };
 
 } // namespace desktop

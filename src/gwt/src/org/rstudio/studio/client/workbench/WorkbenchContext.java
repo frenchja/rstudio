@@ -105,9 +105,25 @@ public class WorkbenchContext
       return activeProjectDir_;
    }
    
+   public String getActiveProjectFileFullPath()
+   {
+      if (activeProjectFileFullPath_ == null)
+      {
+         SessionInfo sessionInfo = session_.getSessionInfo();
+         if (sessionInfo != null)
+         {
+            activeProjectFileFullPath_ = 
+                           sessionInfo.getActiveProjectFileFullPath();
+         }
+      }
+      return activeProjectFileFullPath_;
+   }
+   
+   
    
    FileSystemItem currentWorkingDir_ = FileSystemItem.home();
    FileSystemItem defaultFileDialogDir_ = FileSystemItem.home();
    FileSystemItem activeProjectDir_ = null;
+   String activeProjectFileFullPath_ = null;
    Session session_;
 }

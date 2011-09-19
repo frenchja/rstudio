@@ -222,12 +222,10 @@ int main(int argc, char* argv[])
             filename = verifyAndNormalizeFilename(pApp->arguments().last());
       }
 
-      // determine instance id based on presence of project file
-      // NOTE: only do the toLower on windows & the mac!
-      QString instanceId(QString::fromAscii("RStudio"));
-      FilePath filePath(filename.toUtf8().constData());
-      if (filePath.exists() && filePath.extension() == ".Rproj")
-         instanceId = filename.toLower();
+      // determine instance id from filename (will check for a project
+      // and create an instance id based on the project directory
+      // if appropriate)
+      QString instanceId = ApplicationLaunch::instanceIdFromFilename(filename);
 
       // call sysInit on the app to initialize multi-instance tracking
       pAppLaunch->initInstanceTracking(instanceId);

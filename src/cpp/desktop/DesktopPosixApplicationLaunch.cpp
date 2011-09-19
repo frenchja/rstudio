@@ -14,8 +14,23 @@
 #include "DesktopApplicationLaunch.hpp"
 
 #include "DesktopPosixApplication.hpp"
+#include "DesktopMainWindow.hpp"
+
+#include "DesktopUtils.hpp"
+
+// TODO: outstanding issues
+
+//   - Win32 doesn't support gaining instance lock of switch projects
+//   - Window reactivation doesn't work on Ubuntu
+//   - Instance tracking sometimes fails (allowing dup)
+//   - Desktop doesn't know project at startup (restore) so can
+//     potentially load duplicate project (more orchestration)
+//   - hadAbend and restoreLastProject can't be global anymore
+
 
 // TODO: instance lock must be assumed and released on switch projects
+
+// TODO: joe reivew file path handling for project/instance
 
 // TODO: open in new window command (needs to use full cmd line on osx)
 
@@ -72,10 +87,14 @@ void ApplicationLaunch::initInstanceTracking(const QString &appId)
 }
 
 
-void ApplicationLaunch::setActivationWindow(QWidget* pWindow)
+void ApplicationLaunch::setActivationWindow(MainWindow* pWindow)
 {
    pMainWindow_ = pWindow;
    app()->setActivationWindow(pWindow, true);
+
+   // subscribe to workbench initialized
+   connect(pMainWindow_, SIGNAL(workbenchInitialized(QString)),
+           this, SLOT(onWorkbenchInitialized(QString)));
 }
 
 void ApplicationLaunch::activateWindow()
@@ -91,6 +110,12 @@ bool ApplicationLaunch::sendMessage(QString filename)
 QString ApplicationLaunch::startupOpenFileRequest() const
 {
    return app()->startupOpenFileRequest();
+}
+
+void ApplicationLaunch::onWorkbenchInitialized(QString projectFile)
+{
+   QString instanceId = instanceIdFromFilename(projectFile);
+   app()->resetInstanceId(instanceId);
 }
 
 } // namespace desktop

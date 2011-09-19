@@ -98,6 +98,14 @@ void MainWindow::onWorkbenchInitialized()
    else
       setWindowTitle(QString::fromAscii("RStudio"));
 
+   // get the active project file and use it in call to workbench
+   // intialized signal. do this on a delayed basis to avoid
+   // some crashing behavior we've seen when switching projects
+   QVariant vProjectFile = webView()->page()->mainFrame()->evaluateJavaScript(
+         QString::fromAscii("window.desktopHooks.getActiveProjectFile()"));
+   currentProjectFile_ = vProjectFile.toString();
+   QTimer::singleShot(100, this, SLOT(fireWorkbenchInitialized()));
+
 #ifdef Q_WS_MACX
    webView()->page()->mainFrame()->evaluateJavaScript(
          QString::fromAscii("document.body.className = document.body.className + ' avoid-move-cursor'"));
@@ -105,6 +113,11 @@ void MainWindow::onWorkbenchInitialized()
 
    // check for updates
    updateChecker_.performCheck(false);
+}
+
+void MainWindow::fireWorkbenchInitialized()
+{
+   workbenchInitialized(currentProjectFile_);
 }
 
 void MainWindow::resetMargins()

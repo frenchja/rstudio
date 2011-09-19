@@ -40,11 +40,13 @@ public slots:
    void checkForUpdates();
 signals:
    void firstWorkbenchInitialized();
+   void workbenchInitialized(QString projectFile);
 
 protected slots:
    void onJavaScriptWindowObjectCleared();
    void onWorkbenchInitialized();
    void resetMargins();
+   void fireWorkbenchInitialized();
 
 protected:
    virtual void closeEvent(QCloseEvent*);
@@ -66,6 +68,7 @@ private:
    GwtCallback gwtCallback_;
    UpdateChecker updateChecker_;
    QProcess* pCurrentSessionProcess_;
+   QString currentProjectFile_;
 };
 
 } // namespace desktop

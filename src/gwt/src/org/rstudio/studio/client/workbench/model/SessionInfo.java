@@ -146,6 +146,12 @@ public class SessionInfo extends JavaScriptObject
       return this.active_project_file;
    }-*/;
    
+   // get the full file path to the project file (used for 
+   // instance tracking in desktop version)
+   public final native String getActiveProjectFileFullPath() /*-{
+      return this.active_project_file_full_path;
+   }-*/;
+   
    public final FileSystemItem getActiveProjectDir()
    {
       String projFile = getActiveProjectFile();
@@ -158,6 +164,8 @@ public class SessionInfo extends JavaScriptObject
          return null;
       }
    }
+   
+   
   
    public final native JsObject getProjectUIPrefs() /*-{
       if (!this.project_ui_prefs)

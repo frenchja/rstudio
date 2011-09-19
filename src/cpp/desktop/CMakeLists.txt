@@ -51,6 +51,7 @@ configure_file (${CMAKE_CURRENT_SOURCE_DIR}/config.h.in
 # source files
 set(DESKTOP_SOURCE_FILES
   DesktopAboutDialog.cpp
+  DesktopApplicationLaunch.cpp
   DesktopBrowserWindow.cpp
   DesktopCommandInvoker.cpp
   DesktopDownloadHelper.cpp
