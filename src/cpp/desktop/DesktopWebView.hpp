@@ -15,13 +15,13 @@
 #define DESKTOP_WEB_VIEW_HPP
 
 #include <QtGui>
-#include <QWebView>
+#include <QGraphicsWebView>
 
 #include "DesktopWebPage.hpp"
 
 namespace desktop {
 
-class WebView : public ::QWebView
+class WebView : public ::QGraphicsWebView
 {
    Q_OBJECT
 
@@ -36,22 +36,18 @@ signals:
 public slots:
 
 protected:
-   QWebView* createWindow(QWebPage::WebWindowType type);
+   QGraphicsWebView* createWindow(QWebPage::WebWindowType type);
    QString promptForFilename(const QNetworkRequest& request,
                              QNetworkReply* pReply);
    void keyPressEvent(QKeyEvent* pEv);
-   void wheelEvent (QWheelEvent* event);
 
 protected slots:
    void downloadRequested(const QNetworkRequest&);
    void unsupportedContent(QNetworkReply*);
    void openFile(QString file);
-   void mouseWheelTimerFired();
 
 private:
    QUrl baseUrl_;
-   QTimer* pMouseWheelTimer_;
-   QList<QWheelEvent> mouseWheelEvents_;
    WebPage* pWebPage_;
 };
 

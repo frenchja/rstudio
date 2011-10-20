@@ -100,7 +100,7 @@ public slots:
 
 private:
    void doAction(QKeySequence::StandardKey key);
-   QWebView* webView();
+   QGraphicsWebView* webView();
    MainWindow* pOwnerWindow_;
    bool switchToProjectPending_;
 

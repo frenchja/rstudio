@@ -25,14 +25,14 @@
 namespace desktop {
 
 WebView::WebView(QUrl baseUrl, QWidget *parent) :
-    QWebView(parent),
+    QGraphicsWebView(),
     baseUrl_(baseUrl)
 {
 #ifdef Q_WS_X11
    if (!core::system::getenv("KDE_FULL_SESSION").empty())
       setStyle(new QPlastiqueStyle());
 #endif
-   pWebPage_ = new WebPage(baseUrl, this);
+   pWebPage_ = new WebPage(baseUrl, parent);
    setPage(pWebPage_);
 
    page()->setForwardUnsupportedContent(true);
@@ -43,12 +43,6 @@ WebView::WebView(QUrl baseUrl, QWidget *parent) :
            this, SLOT(downloadRequested(QNetworkRequest)));
    connect(page(), SIGNAL(unsupportedContent(QNetworkReply*)),
            this, SLOT(unsupportedContent(QNetworkReply*)));
-
-   // Use a timer to reduce the granularity of mouse events on Mac
-   pMouseWheelTimer_ = new QTimer(this);
-   pMouseWheelTimer_->setInterval(20);
-   connect(pMouseWheelTimer_, SIGNAL(timeout()),
-           this, SLOT(mouseWheelTimerFired()));
 }
 
 void WebView::setBaseUrl(const QUrl& baseUrl)
@@ -59,7 +53,7 @@ void WebView::setBaseUrl(const QUrl& baseUrl)
 
 
 
-QWebView* WebView::createWindow(QWebPage::WebWindowType)
+QGraphicsWebView* WebView::createWindow(QWebPage::WebWindowType)
 {
    SecondaryWindow* pWindow = new SecondaryWindow(baseUrl_);
    pWindow->show();
@@ -83,7 +77,7 @@ QString WebView::promptForFilename(const QNetworkRequest& request,
       }
    }
 
-   QString fileName = QFileDialog::getSaveFileName(this,
+   QString fileName = QFileDialog::getSaveFileName(NULL,
                                                    tr("Download File"),
                                                    defaultFileName);
    return fileName;
@@ -103,69 +97,7 @@ void WebView::keyPressEvent(QKeyEvent* pEv)
                    pEv->isAutoRepeat(),
                    pEv->count());
 
-   this->QWebView::keyPressEvent(&newEv);
-}
-
-void WebView::wheelEvent (QWheelEvent* event)
-{
-#ifdef Q_WS_MAC
-   if (event->orientation() != Qt::Vertical)
-   {
-      this->QWebView::wheelEvent(event);
-      return;
-   }
-
-   this->mouseWheelEvents_.push_back(*event);
-   if (!pMouseWheelTimer_->isActive())
-   {
-      pMouseWheelTimer_->start();
-   }
-#else
-   this->QWebView::wheelEvent(event);
-#endif
-}
-
-void WebView::mouseWheelTimerFired()
-{
-   pMouseWheelTimer_->stop();
-
-   if (mouseWheelEvents_.empty())
-      return;
-
-   int totalDelta = 0;
-   for (int i = 0; i < mouseWheelEvents_.length(); i++)
-   {
-      totalDelta += mouseWheelEvents_.at(i).delta();
-   }
-   QWheelEvent event = mouseWheelEvents_.last();
-   mouseWheelEvents_.clear();
-
-   while (totalDelta != 0)
-   {
-      // If the absolute delta value exceeds 5000, Ace editor
-      // goes into a super fine granularity mode that we need
-      // to avoid
-      const int MAX_ABS_DELTA_VALUE = 5000;
-
-      int thisDelta = totalDelta;
-      if (thisDelta > MAX_ABS_DELTA_VALUE)
-      {
-         thisDelta = MAX_ABS_DELTA_VALUE;
-      }
-      else if (thisDelta < -MAX_ABS_DELTA_VALUE)
-      {
-         thisDelta = -MAX_ABS_DELTA_VALUE;
-      }
-      totalDelta -= thisDelta;
-
-      QWheelEvent totalEvent(event.pos(),
-                             event.globalPos(),
-                             thisDelta,
-                             event.buttons(),
-                             event.modifiers(),
-                             event.orientation());
-      this->QWebView::wheelEvent(&totalEvent);
-   }
+   this->QGraphicsWebView::keyPressEvent(&newEv);
 }
 
 void WebView::downloadRequested(const QNetworkRequest& request)

@@ -250,7 +250,7 @@ void GwtCallback::doAction(QKeySequence::StandardKey key)
    QCoreApplication::postEvent(webView(), keyEvent);
 }
 
-QWebView* GwtCallback::webView()
+QGraphicsWebView* GwtCallback::webView()
 {
    return pOwnerWindow_->webView();
 }

@@ -42,7 +42,10 @@ BrowserWindow::BrowserWindow(bool showToolbar,
    pToolbar_ = showToolbar ? addToolBar(tr("Navigation")) : new QToolBar();
    pToolbar_->setMovable(false);
 
-   setCentralWidget(pView_);
+   QGraphicsScene* pScene = new QGraphicsScene(this);
+   pScene->addItem(pView_);
+   QGraphicsView* pGraphicsView = new QGraphicsView(pScene, this);
+   setCentralWidget(pGraphicsView);
    setUnifiedTitleAndToolBarOnMac(true);
 
    QShortcut* copyShortcut = new QShortcut(QKeySequence::Copy, this);
