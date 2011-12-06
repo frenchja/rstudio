@@ -14,6 +14,7 @@
 project (SESSION)
 
 add_subdirectory(workers)
+add_subdirectory(svnclient)
 
 # include files
 file(GLOB_RECURSE SESSION_HEADER_FILES "*.h*")
