@@ -305,22 +305,7 @@ public class Workbench implements BusyHandler,
    @Handler
    public void onShowShellDialog()
    {
-      if (Desktop.isDesktop())
-      {
-         server_.getTerminalOptions(new SimpleRequestCallback<TerminalOptions>()
-         {
-            @Override
-            public void onResponseReceived(TerminalOptions options)
-            {
-               Desktop.getFrame().openTerminal(options.getTerminalPath(),
-                                               options.getWorkingDirectory());
-            }
-         });
-      }
-      else
-      {
          pPosixShellDialog_.get().showModal();
-      }
    }
 
    private final Server server_;

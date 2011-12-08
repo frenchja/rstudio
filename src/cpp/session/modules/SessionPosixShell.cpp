@@ -84,13 +84,20 @@ public:
          core::system::addToPath(&shellEnv, svnBinDir);
 
       // configure bash command
+#ifdef _WIN32
+      core::shell_utils::ShellCommand bashCommand("cmd.exe");
+      bashCommand << "/Q";
+#else
       core::shell_utils::ShellCommand bashCommand("/bin/bash");
       bashCommand << "--norc";
+#endif
 
       // set options and run process
       core::system::ProcessOptions options;
       options.workingDir = module_context::shellWorkingDirectory();
+#ifndef _WIN32
       options.pseudoterminal = core::system::Pseudoterminal(width, 1);
+#endif
       options.environment = shellEnv;
       Error error = module_context::processSupervisor().runCommand(bashCommand,
                                                                    options,
@@ -222,8 +229,10 @@ Error startPosixShell(const json::JsonRpcRequest& request,
       s_pActiveShell.reset();
    }
 
+#ifndef _WIN32
    // set public key info
    pResponse->setResult(crypto::publicKeyInfoJson());
+#endif
 
    // start a new shell
    return PosixShell::create(width, maxLines, &s_pActiveShell);
@@ -256,9 +265,13 @@ Error sendInputToPosixShell(const json::JsonRpcRequest& request,
 
    // decrypt input
    std::string decryptedInput;
+#ifndef _WIN32
    error = core::system::crypto::rsaPrivateDecrypt(input, &decryptedInput);
    if (error)
       return error;
+#else
+   decryptedInput = input;
+#endif
 
    // send input
    s_pActiveShell->enqueueInput(decryptedInput);

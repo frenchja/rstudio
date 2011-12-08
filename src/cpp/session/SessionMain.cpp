@@ -1283,8 +1283,8 @@ Error rInit(const r::session::RInitInfo& rInitInfo)
       (modules::console_process::initialize)
 #ifdef RSTUDIO_SERVER
       (modules::crypto::initialize)
-      (modules::posix_shell::initialize)
 #endif
+      (modules::posix_shell::initialize)
       (modules::diff::initialize)
       (modules::files::initialize)
       (modules::workspace::initialize)
