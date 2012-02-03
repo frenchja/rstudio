@@ -44,7 +44,7 @@ cd ace
 git checkout master
 
 # Point this to the upstream commit that we've tested
-git reset --hard 26a1af8778178fb2488915a24b3c0d951cf4d8a9
+git reset --hard c824e608d87147552bbe5d5c929b842e39848d02
 
 git submodule update --init --recursive
 
@@ -52,17 +52,13 @@ git submodule update --init --recursive
 git merge \
     origin/bugfix-webkit-paste2 \
     origin/bugfix-updatefontsize2 \
-    origin/bugfix-ctrl-backspace \
     origin/bugfix-active-line-back \
-    origin/patch-advanced-indent3 \
+    origin/patch-advanced-indent4 \
     origin/patch/invisible-colors2 \
-    origin/patch-build-matchingbraceoutdent \
-    origin/patch-normalizeinput2 \
+    origin/patch/normalize-input3 \
     origin/bugfix/search-regexp \
     origin/bugfix/selected-word-colors2 \
-    origin/patch/scroll-granularity \
-    origin/patch/escape-characters2 \
-    origin/bugfix/no-paste-event-on-indent \
+    origin/patch/scroll-granularity2 \
 
 
 make clean
