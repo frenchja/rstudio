@@ -38,13 +38,17 @@
 
 set -e
 
-rm -rf ace
-git clone git@github.com:rstudio/ace.git
+if [ ! -d ace ]; then
+  git clone git://github.com/rstudio/ace.git
+fi
 cd ace
+git fetch origin
 git checkout master
+git clean -df
+npm install dryice
 
 # Point this to the upstream commit that we've tested
-git reset --hard c824e608d87147552bbe5d5c929b842e39848d02
+git reset --hard deffa824dac5d3428138ea2a217ca56d1a16bbf3
 
 git submodule update --init --recursive
 
@@ -60,8 +64,9 @@ git merge \
     origin/bugfix/selected-word-colors2 \
     origin/patch/scroll-granularity2 \
 
+chmod +x Makefile.dryice.js
 
 make clean
 make
-cp build/src/ace.js ../../src/org/rstudio/studio/client/workbench/views/source/editors/text/ace/
-cp build/src/ace-uncompressed.js ../../src/org/rstudio/studio/client/workbench/views/source/editors/text/ace/
+cp build/src/ace-compat.js ../../src/org/rstudio/studio/client/workbench/views/source/editors/text/ace/ace.js
+cp build/src/ace-compat-uncompressed.js ../../src/org/rstudio/studio/client/workbench/views/source/editors/text/ace/ace-uncompressed.js
