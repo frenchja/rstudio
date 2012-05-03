@@ -35,9 +35,10 @@ class EvinceSynctex : public Synctex
    Q_OBJECT
 
 public:
-   explicit EvinceSynctex(MainWindow* pMainWindow);
+   explicit EvinceSynctex(MainWindow* pMainWindow, bool pageOnly);
 
    virtual void syncView(const QString& pdfFile,
+                         int page,
                          const QString& srcFile,
                          const QPoint& srcLoc);
 
@@ -65,7 +66,7 @@ private:
       {
       }
 
-      SyncRequest(QString pdfFile, QString srcFile, QPoint srcLoc)
+      SyncRequest(QString pdfFile,  QString srcFile, QPoint srcLoc)
          : pdfFile(pdfFile), page(-1), srcFile(srcFile), srcLoc(srcLoc)
       {
       }
@@ -83,7 +84,10 @@ private:
                  const QString& srcFile,
                  const QPoint& srcLoc);
 
+   void executeEvince(const QString &pdfFile, int page);
+
 private:
+   bool pageOnly_;
    EvinceDaemon* pEvince_;
    QMap<QString, EvinceWindow*> windows_;
 

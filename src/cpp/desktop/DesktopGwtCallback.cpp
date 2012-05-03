@@ -869,7 +869,7 @@ bool GwtCallback::forceFastScrollFactor()
 
 QString GwtCallback::getDesktopSynctexViewer()
 {
-    return Synctex::desktopViewerName();
+    return Synctex::desktopViewer().name;
 }
 
 void GwtCallback::externalSynctexPreview(QString pdfPath, int page)
@@ -878,11 +878,13 @@ void GwtCallback::externalSynctexPreview(QString pdfPath, int page)
 }
 
 void GwtCallback::externalSynctexView(const QString& pdfFile,
+                                      int page,
                                       const QString& srcFile,
                                       int line,
                                       int column)
 {
    synctex().syncView(resolveAliasedPath(pdfFile),
+                      page,
                       resolveAliasedPath(srcFile),
                       QPoint(line, column));
 }

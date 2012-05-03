@@ -31,6 +31,7 @@ import org.rstudio.studio.client.common.satellite.Satellite;
 import org.rstudio.studio.client.common.satellite.SatelliteManager;
 import org.rstudio.studio.client.common.synctex.events.SynctexStatusChangedEvent;
 import org.rstudio.studio.client.common.synctex.events.SynctexViewPdfEvent;
+import org.rstudio.studio.client.common.synctex.model.ForwardSearchResult;
 import org.rstudio.studio.client.common.synctex.model.PdfLocation;
 import org.rstudio.studio.client.common.synctex.model.SourceLocation;
 import org.rstudio.studio.client.common.synctex.model.SynctexServerOperations;
@@ -177,19 +178,21 @@ public class Synctex implements CompilePdfStartedEvent.Handler,
       {
          // apply concordane
          final ProgressIndicator indicator = getSyncProgress();  
-         server_.applyForwardConcordance(
+         server_.synctexForwardSearch(
                                  pdfPath_, 
                                  sourceLocation, 
-                                 new ServerRequestCallback<SourceLocation>() {
+                                 new ServerRequestCallback<ForwardSearchResult>() {
             @Override
-            public void onResponseReceived(SourceLocation sourceLocation)
+            public void onResponseReceived(ForwardSearchResult result)
             {
                indicator.onCompleted();
                
-               if (sourceLocation != null)
+               if (result != null)
                {
+                  SourceLocation sourceLocation = result.getTexSourceLocation();
                   Desktop.getFrame().externalSynctexView(
                                  pdfPath_,
+                                 result.getPdfLocation().getPage(),
                                  sourceLocation.getFile(),
                                  sourceLocation.getLine(),
                                  sourceLocation.getColumn());    
@@ -249,15 +252,16 @@ public class Synctex implements CompilePdfStartedEvent.Handler,
       server_.synctexForwardSearch(
          rootDocument,
          sourceLocation,
-         new ServerRequestCallback<PdfLocation>() {
+         new ServerRequestCallback<ForwardSearchResult>() {
 
             @Override
-            public void onResponseReceived(PdfLocation location)
+            public void onResponseReceived(ForwardSearchResult result)
             {
                indicator.onCompleted();
                
-               if (location != null)
-                  eventBus_.fireEvent(new SynctexViewPdfEvent(location));
+               if (result != null)
+                  eventBus_.fireEvent(
+                           new SynctexViewPdfEvent(result.getPdfLocation()));
             }
             
             @Override

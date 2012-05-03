@@ -96,6 +96,7 @@ public interface DesktopFrame extends JavaScriptPassthrough
    void externalSynctexPreview(String pdfPath, int page);
    
    void externalSynctexView(String pdfFile, 
+                            int page,
                             String srcFile, 
                             int line,
                             int column);

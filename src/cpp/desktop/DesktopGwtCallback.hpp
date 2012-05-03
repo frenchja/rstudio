@@ -121,6 +121,7 @@ public slots:
    void externalSynctexPreview(QString pdfPath, int page);
 
    void externalSynctexView(const QString& pdfFile,
+                            int page,
                             const QString& srcFile,
                             int line,
                             int column);

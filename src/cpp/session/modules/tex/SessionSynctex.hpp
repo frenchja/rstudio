@@ -15,6 +15,7 @@
 #define SESSION_MODULES_TEX_SYNCTEX_HPP
 
 #include <core/json/Json.hpp>
+#include <core/tex/TexSynctex.hpp>
 
 namespace core {
    class Error;
@@ -30,6 +31,7 @@ namespace synctex {
 // (or null if the search didn't succeed)
 core::Error forwardSearch(const core::FilePath& rootDocument,
                           const core::json::Object& sourceLocation,
+                          core::tex::SourceLocation* pTexSourceLocation,
                           core::json::Value* pPdfLocation);
 
 core::Error initialize();

@@ -17,13 +17,9 @@ import org.rstudio.studio.client.server.ServerRequestCallback;
 
 public interface SynctexServerOperations
 {
-   void applyForwardConcordance(String rootDocument,
-                                SourceLocation sourceLocation,
-                                ServerRequestCallback<SourceLocation> callback);
-   
    void synctexForwardSearch(String rootDocument,
                              SourceLocation sourceLocation, 
-                             ServerRequestCallback<PdfLocation> callback);
+                             ServerRequestCallback<ForwardSearchResult> cb);
    
    
    void synctexInverseSearch(PdfLocation pdfLocation,

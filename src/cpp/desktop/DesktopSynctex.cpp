@@ -37,25 +37,7 @@ namespace desktop {
 
 namespace {
 
-struct SynctexViewer
-{
-   SynctexViewer()
-      : versionMajor(0), versionMinor(0), versionPatch(0)
-   {
-   }
-
-   QString name;
-
-   bool empty() const { return name.isEmpty(); }
-
-   // NOTE: use QT_VERSION_CHECK macro for comparisons
-   int versionMajor;
-   int versionMinor;
-   int versionPatch;
-};
-
 SynctexViewer s_viewer;
-
 
 #if defined(Q_OS_WIN)
 
@@ -105,9 +87,14 @@ SynctexViewer discoverViewer()
       // the synctex dBus interface changed to include a timestamp parameter
       // in evince 2.91.3 -- we therefore require this version or greater
       // in order to work with evince
-      if (QT_VERSION_CHECK(sv.versionMajor, sv.versionMinor, sv.versionPatch) >=
-          QT_VERSION_CHECK(2, 91, 3))
+      int version = QT_VERSION_CHECK(sv.versionMajor,
+                                     sv.versionMinor,
+                                     sv.versionPatch);
+      if ( version >= QT_VERSION_CHECK(2, 31, 5))
       {
+         if (version < QT_VERSION_CHECK(3,1,90))
+            sv.pageOnly = true;
+
          return sv;
       }
       else
@@ -135,12 +122,12 @@ SynctexViewer discoverViewer()
 
 } // anonymous namespace
 
-QString Synctex::desktopViewerName()
+const SynctexViewer& Synctex::desktopViewer()
 {
    if (s_viewer.empty())
       s_viewer = discoverViewer();
 
-   return s_viewer.name;
+   return s_viewer;
 }
 
 Synctex* Synctex::create(MainWindow* pMainWindow)
@@ -151,7 +138,8 @@ Synctex* Synctex::create(MainWindow* pMainWindow)
 #elif defined(Q_OS_WIN)
    return new synctex::SumatraSynctex(pMainWindow);
 #elif defined(Q_OS_LINUX)
-   return new synctex::EvinceSynctex(pMainWindow);
+   return new synctex::EvinceSynctex(pMainWindow,
+                                     desktopViewer().pageOnly);
 #else
    return new Synctex(pMainWindow);
 #endif

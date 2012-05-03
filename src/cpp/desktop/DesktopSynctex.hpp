@@ -19,14 +19,28 @@
 #include "DesktopMainWindow.hpp"
 namespace desktop {
 
+struct SynctexViewer
+{
+   SynctexViewer()
+      : pageOnly(false), versionMajor(0), versionMinor(0), versionPatch(0)
+   {
+   }
 
+   QString name;
+
+   bool empty() const { return name.isEmpty(); }
+
+   bool pageOnly;
+
+   int versionMajor;
+   int versionMinor;
+   int versionPatch;
+};
 
 class Synctex : public QObject
 {
 public:
-    // return the name of a desktop viewer if there is one
-    // available for this platform/environment
-    static QString desktopViewerName();
+    static const SynctexViewer& desktopViewer();
 
     static Synctex* create(MainWindow* pMainWindow);
 
@@ -42,6 +56,7 @@ public:
    // calling onClosed and onSyncSource at the appropriate times
 
    virtual void syncView(const QString& pdfFile,
+                         int page,
                          const QString& srcFile,
                          const QPoint& srcLoc)
    {

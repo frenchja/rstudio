@@ -43,17 +43,22 @@ void logDBusError(const QDBusError& error, const ErrorLocation& location)
 
 } // anonymous namespace
 
-EvinceSynctex::EvinceSynctex(MainWindow* pMainWindow)
-   : Synctex(pMainWindow)
+EvinceSynctex::EvinceSynctex(MainWindow* pMainWindow, bool pageOnly)
+   : Synctex(pMainWindow), pageOnly_(pageOnly), pEvince_(NULL)
 {
-   pEvince_ = new EvinceDaemon(this);
+   if (!pageOnly_)
+      pEvince_ = new EvinceDaemon(this);
 }
 
 void EvinceSynctex::syncView(const QString& pdfFile,
+                             int page,
                              const QString& srcFile,
                              const QPoint& srcLoc)
 {
-   syncView(SyncRequest(pdfFile, srcFile, srcLoc));
+   if (pageOnly_)
+      syncView(pdfFile, page);
+   else
+      syncView(SyncRequest(pdfFile, srcFile, srcLoc));
 }
 
 void EvinceSynctex::syncView(const QString& pdfFile, int page)
@@ -63,11 +68,23 @@ void EvinceSynctex::syncView(const QString& pdfFile, int page)
 
 void EvinceSynctex::syncView(const SyncRequest& syncRequest)
 {
+   // get the pdf file
    QString pdfFile = syncRequest.pdfFile;
-   if (windows_.contains(pdfFile))
+
+   // if this is a page-only sync implementation then don't bother
+   // with all of the dbus stuff
+   if (pageOnly_)
+   {
+      executeEvince(pdfFile, syncRequest.page);
+   }
+
+   // already have the window
+   else if (windows_.contains(pdfFile))
    {
       syncView(windows_.value(pdfFile), syncRequest);
    }
+
+   // need to get the window
    else
    {
       // find the window
@@ -133,18 +150,23 @@ void EvinceSynctex::syncView(EvinceWindow* pWindow, const SyncRequest& req)
 {
    if (req.page != -1)
    {
-      QStringList args;
-      args.append(QString::fromAscii("-i"));
-      args.append(QString::fromStdString(
-                           boost::lexical_cast<std::string>(req.page)));
-      args.append(req.pdfFile);
-      QProcess::startDetached(QString::fromAscii("evince"), args);
+      executeEvince(req.pdfFile, req.page);
    }
    else
    {
       syncView(pWindow, req.srcFile, req.srcLoc);
    }
 
+}
+
+void  EvinceSynctex::executeEvince(const QString &pdfFile, int page)
+{
+   QStringList args;
+   args.append(QString::fromAscii("-i"));
+   args.append(QString::fromStdString(
+                        boost::lexical_cast<std::string>(page)));
+   args.append(pdfFile);
+   QProcess::startDetached(QString::fromAscii("evince"), args);
 }
 
 void EvinceSynctex::syncView(EvinceWindow* pWindow,

@@ -212,9 +212,11 @@ void enqueCompletedEvent(bool succeeded,
    dataJson["synctex_available"] = synctexAvailable;
    if (synctexAvailable)
    {
+      core::tex::SourceLocation texSrcLocation;
       json::Value pdfLocation;
       Error error = modules::tex::synctex::forwardSearch(texFilePath,
                                                          sourceLocation,
+                                                         &texSrcLocation,
                                                          &pdfLocation);
       if (error)
          LOG_ERROR(error);
