@@ -35,32 +35,15 @@ public:
 
 public:
     EvinceWindow(const QString &service, QObject *parent = 0);
-
     ~EvinceWindow();
 
 public Q_SLOTS: // METHODS
-    inline QDBusPendingReply<> SyncView(const QString &source_file, const QPoint &source_point, uint timestamp)
-    {
-        QList<QVariant> argumentList;
-        argumentList << QVariant::fromValue(source_file) << QVariant::fromValue(source_point) << QVariant::fromValue(timestamp);
-        return asyncCallWithArgumentList(QLatin1String("SyncView"), argumentList);
-    }
 
 Q_SIGNALS: // SIGNALS
     void Closed();
-    void DocumentLoaded(const QString &uri);
-    void SyncSource(const QString &source_file, const QPoint &source_point, uint timestamp);
 };
 
 } // namespace synctex
 } // namespace desktop
-
-namespace org {
-  namespace gnome {
-    namespace evince {
-      typedef desktop::synctex::EvinceWindow Window;
-    }
-  }
-}
 
 #endif // DESKTOP_SYNCTEX_EVINCEWINDOW_HPP

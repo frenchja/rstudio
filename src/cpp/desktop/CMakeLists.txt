@@ -72,6 +72,9 @@ if(WIN32 OR APPLE)
    list(REMOVE_ITEM MOC_DESKTOP_HEADER_FILES
      ${CMAKE_CURRENT_SOURCE_DIR}/synctex/evince/EvinceDaemon.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/synctex/evince/EvinceWindow.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/synctex/evince/EvinceWindow1.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/synctex/evince/EvinceWindow2.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/synctex/evince/EvinceWindow3.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/synctex/evince/EvinceSynctex.hpp
    )
 endif()
@@ -138,6 +141,9 @@ else()
       synctex/evince/EvinceDaemon.cpp
       synctex/evince/EvinceSynctex.cpp
       synctex/evince/EvinceWindow.cpp
+      synctex/evince/EvinceWindow1.cpp
+      synctex/evince/EvinceWindow2.cpp
+      synctex/evince/EvinceWindow3.cpp
     )
   endif()
 endif(WIN32)

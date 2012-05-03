@@ -23,7 +23,7 @@
 #include <DesktopUtils.hpp>
 
 #include "EvinceDaemon.hpp"
-#include "EvinceWindow.hpp"
+
 
 using namespace core;
 
@@ -43,10 +43,26 @@ void logDBusError(const QDBusError& error, const ErrorLocation& location)
 
 } // anonymous namespace
 
-EvinceSynctex::EvinceSynctex(MainWindow* pMainWindow)
+EvinceSynctex::EvinceSynctex(const SynctexViewerInfo& sv,
+                             MainWindow* pMainWindow)
    : Synctex(pMainWindow)
 {
    pEvince_ = new EvinceDaemon(this);
+
+   // determine the window dbus api version based on the evince version
+   // (see src/cpp/desktop/synctex/evince/README for more details on
+   // the evolution of the api accross versions of evince)
+
+   int ver = QT_VERSION_CHECK(sv.versionMajor,
+                              sv.versionMinor,
+                              sv.versionPatch);
+
+   if (ver >= QT_VERSION_CHECK(2, 91, 3))
+      windowDBusVersion_ = 3;
+   else if (ver >= QT_VERSION_CHECK(2, 91, 0))
+      windowDBusVersion_ = 2;
+   else
+      windowDBusVersion_ = 1;
 }
 
 void EvinceSynctex::syncView(const QString& pdfFile,
@@ -101,7 +117,7 @@ void EvinceSynctex::onFindWindowFinished(QDBusPendingCallWatcher* pWatcher)
    else
    {
       // initialize a connection to it
-      EvinceWindow* pWindow = new EvinceWindow(reply.value());
+      EvinceWindow* pWindow = createWindow(reply.value());
       if (!pWindow->isValid())
       {
          logDBusError(pWindow->lastError(), ERROR_LOCATION);
@@ -116,10 +132,8 @@ void EvinceSynctex::onFindWindowFinished(QDBusPendingCallWatcher* pWatcher)
                        SIGNAL(Closed()),
                        this,
                        SLOT(onClosed()));
-      QObject::connect(pWindow,
-                       SIGNAL(SyncSource(const QString&,const QPoint&,uint)),
-                       this,
-                       SLOT(onSyncSource(const QString&,const QPoint&,uint)));
+
+      connectSyncSource(pWindow);
 
       // perform sync
       syncView(pWindow, req);
@@ -151,7 +165,8 @@ void EvinceSynctex::syncView(EvinceWindow* pWindow,
                              const QString& srcFile,
                              const QPoint& srcLoc)
 {
-   QDBusPendingReply<> reply = pWindow->SyncView(
+   QDBusPendingReply<> reply = callSyncView(
+                                       pWindow,
                                        srcFile,
                                        srcLoc,
                                        core::date_time::secondsSinceEpoch());
@@ -188,15 +203,63 @@ void EvinceSynctex::onClosed()
    pWindow->deleteLater();
 }
 
+EvinceWindow* EvinceSynctex::createWindow(const QString& service)
+{
+   switch(windowDBusVersion_)
+   {
+      case 1:
+         return new EvinceWindow1(service);
+      case 2:
+         return new EvinceWindow2(service);
+      case 3:
+      default:
+         return new EvinceWindow3(service);
+   }
+}
+
+void EvinceSynctex::connectSyncSource(EvinceWindow* pWindow)
+{
+   switch(windowDBusVersion_)
+   {
+      case 1:
+         QObject::connect(
+               (EvinceWindow1*)pWindow,
+               SIGNAL(SyncSource(const QString&,const QPoint&)),
+               this,
+               SLOT(onSyncSource(const QString&,const QPoint&)));
+         break;
+      case 2:
+         QObject::connect(
+               (EvinceWindow2*)pWindow,
+               SIGNAL(SyncSource(const QString&,const QPoint&)),
+               this,
+               SLOT(onSyncSource(const QString&,const QPoint&)));
+         break;
+      case 3:
+      default:
+         QObject::connect(
+               (EvinceWindow3*)pWindow,
+               SIGNAL(SyncSource(const QString&,const QPoint&,uint)),
+               this,
+               SLOT(onSyncSource3(const QString&,const QPoint&,uint)));
+         break;
+   }
+}
+
 
 void EvinceSynctex::onSyncSource(const QString& srcFile,
-                                 const QPoint& srcLoc,
-                                 uint)
+                                 const QPoint& srcLoc)
 {
    QUrl fileUrl(srcFile);
    Synctex::onSyncSource(fileUrl.toLocalFile(), srcLoc);
 }
 
+void EvinceSynctex::onSyncSource3(const QString& srcFile,
+                                 const QPoint& srcLoc,
+                                 uint)
+{
+   onSyncSource(srcFile, srcLoc);
+}
 
 } // namesapce synctex
 } // namespace desktop

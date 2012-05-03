@@ -37,31 +37,11 @@ namespace desktop {
 
 namespace {
 
-struct SynctexViewer
-{
-   SynctexViewer()
-      : versionMajor(0), versionMinor(0), versionPatch(0)
-   {
-   }
-
-   QString name;
-
-   bool empty() const { return name.isEmpty(); }
-
-   // NOTE: use QT_VERSION_CHECK macro for comparisons
-   int versionMajor;
-   int versionMinor;
-   int versionPatch;
-};
-
-SynctexViewer s_viewer;
-
-
 #if defined(Q_OS_WIN)
 
-SynctexViewer discoverViewer()
+SynctexViewerInfo discoverViewer()
 {
-  SynctexViewer sv;
+  SynctexViewerInfo sv;
   sv.name = QString::fromAscii("SumatraPDF");
   sv.versionMajor = 2;
   sv.versionMinor = 0;
@@ -71,7 +51,7 @@ SynctexViewer discoverViewer()
 
 #elif defined(Q_OS_LINUX)
 
-SynctexViewer discoverViewer()
+SynctexViewerInfo discoverViewer()
 {
    // probe for evince version
    core::system::ProcessResult result;
@@ -81,11 +61,11 @@ SynctexViewer discoverViewer()
    if (error)
    {
       LOG_ERROR(error);
-      return SynctexViewer();
+      return SynctexViewerInfo();
    }
    else if (result.exitStatus != EXIT_SUCCESS)
    {
-      return SynctexViewer();
+      return SynctexViewerInfo();
    }
 
    // trim output
@@ -96,51 +76,47 @@ SynctexViewer discoverViewer()
    boost::regex re("^.*(\\d+)\\.(\\d+)\\.(\\d)+$");
    if (boost::regex_match(stdOut, match, re))
    {
-      SynctexViewer sv;
+      SynctexViewerInfo sv;
       sv.name = QString::fromAscii("Evince");
       sv.versionMajor = safe_convert::stringTo<int>(match[1], 2);
       sv.versionMinor = safe_convert::stringTo<int>(match[2], 0);
       sv.versionPatch = safe_convert::stringTo<int>(match[3], 0);
 
-      // the synctex dBus interface changed to include a timestamp parameter
-      // in evince 2.91.3 -- we therefore require this version or greater
-      // in order to work with evince
+      // synctex was introduced in evince 2.31.5
       if (QT_VERSION_CHECK(sv.versionMajor, sv.versionMinor, sv.versionPatch) >=
-          QT_VERSION_CHECK(2, 91, 3))
+          QT_VERSION_CHECK(2, 31, 5))
       {
          return sv;
       }
       else
       {
-         return SynctexViewer();
+         return SynctexViewerInfo();
       }
    }
    else
    {
-      return SynctexViewer();
+      return SynctexViewerInfo();
    }
 }
 
 #else
 
-SynctexViewer discoverViewer()
+SynctexViewerInfo discoverViewer()
 {
-   return SynctexViewer();
+   return SynctexViewerInfo();
 }
 
 #endif
 
-
-
-
 } // anonymous namespace
 
-QString Synctex::desktopViewerName()
+const SynctexViewerInfo& Synctex::desktopViewer()
 {
-   if (s_viewer.empty())
-      s_viewer = discoverViewer();
+   static SynctexViewerInfo viewer;
+   if (viewer.empty())
+      viewer = discoverViewer();
 
-   return s_viewer.name;
+   return viewer;
 }
 
 Synctex* Synctex::create(MainWindow* pMainWindow)
@@ -151,7 +127,7 @@ Synctex* Synctex::create(MainWindow* pMainWindow)
 #elif defined(Q_OS_WIN)
    return new synctex::SumatraSynctex(pMainWindow);
 #elif defined(Q_OS_LINUX)
-   return new synctex::EvinceSynctex(pMainWindow);
+   return new synctex::EvinceSynctex(desktopViewer(), pMainWindow);
 #else
    return new Synctex(pMainWindow);
 #endif
