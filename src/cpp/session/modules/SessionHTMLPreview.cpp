@@ -619,14 +619,12 @@ std::string preFontFamily()
    return boost::algorithm::join(fonts, ", ");
 }
 
-std::string mathjaxJs(const std::string& htmlOutput)
+std::string mathjaxJs(const std::string& mathjaxUrl,
+                      const std::string& htmlOutput)
 {
    std::string mathjaxJs;
    if (requiresMathjax(htmlOutput))
    {
-      std::string mathjaxUrl = "http://cdn.mathjax.org/mathjax/2.0-latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
-      // std::string mathjaxUrl = "https://d3eoax9i5htok0.cloudfront.net/mathjax/2.0-latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
-
       mathjaxJs = "<script type=\"text/x-mathjax-config\">"
                   "MathJax.Hub.Config({"
                      "tex2jax: {"
@@ -651,9 +649,25 @@ std::string mathjaxJs(const std::string& htmlOutput)
    return mathjaxJs;
 }
 
+std::string mathjaxJs(const std::string& htmlOutput)
+{
+   return mathjaxJs(
+        "https://c328740.ssl.cf1.rackcdn.com/mathjax/2.0-latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML",
+         htmlOutput);
+}
+
+
 std::string previewMathjaxJs(const std::string& htmlOutput)
 {
-   return mathjaxJs(htmlOutput);
+   if (session::options().programMode() == kSessionProgramModeDesktop)
+   {
+      return mathjaxJs("mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML",
+                       htmlOutput);
+   }
+   else
+   {
+      return mathjaxJs(htmlOutput);
+   }
 }
 
 
@@ -792,6 +806,14 @@ void handlePreviewRequest(const http::Request& request,
          pResponse->setFile(s_pCurrentPreview_->knitrOutputFile(), request);
       else
          pResponse->setFile(s_pCurrentPreview_->targetFile(), request);
+   }
+
+   // request for mathjax file
+   else if (boost::algorithm::starts_with(path, "mathjax"))
+   {
+      FilePath filePath =
+            session::options().mathjaxPath().parent().childPath(path);
+      pResponse->setFile(filePath, request);
    }
 
    // request for dependent file

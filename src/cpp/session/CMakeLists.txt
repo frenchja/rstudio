@@ -15,9 +15,12 @@ project (SESSION)
 
 add_subdirectory(workers)
 
-# verify that install-dictionaries has been run
+# verify that install-dictionaries and install-mathjax have been run
 if(NOT EXISTS "${RSTUDIO_DEPENDENCIES_DIR}/common/dictionaries")
   message(FATAL_ERROR "Dictionaries not found (re-run install-dependencies script to install)")
+endif()
+if(NOT EXISTS "${RSTUDIO_DEPENDENCIES_DIR}/common/mathjax")
+  message(FATAL_ERROR "Mathjax not found (re-run install-dependencies script to install)")
 endif()
 
 # include files
@@ -291,6 +294,11 @@ endif()
 # install hunspell dictionaries
 install(DIRECTORY "${RSTUDIO_DEPENDENCIES_DIR}/common/dictionaries"
         DESTINATION "${RSTUDIO_INSTALL_SUPPORTING}/resources")
+
+# install mathjax for local html preview
+install(DIRECTORY "${RSTUDIO_DEPENDENCIES_DIR}/common/mathjax"
+        DESTINATION "${RSTUDIO_INSTALL_SUPPORTING}/resources")
+
 
 # add gpl for desktop
 if(RSTUDIO_DESKTOP)
