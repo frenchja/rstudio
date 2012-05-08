@@ -28,7 +28,7 @@ download()
   then
     curl -L https://s3.amazonaws.com/rstudio-buildtools/$1 > $1
   else
-    wget https://s3.amazonaws.com/rstudio-buildtools$1 -O $1
+    wget https://s3.amazonaws.com/rstudio-buildtools/$1 -O $1
   fi
 }
 
