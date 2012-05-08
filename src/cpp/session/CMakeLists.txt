@@ -260,7 +260,25 @@ if (NOT RSTUDIO_SESSION_WIN64)
    file(GLOB R_MODULE_SRC_FILES "${CMAKE_CURRENT_BINARY_DIR}/modules/R/*.R")
    install(FILES ${R_MODULE_SRC_FILES}
            DESTINATION ${RSTUDIO_INSTALL_SUPPORTING}/R/modules)
-           
+
+
+   # install hunspell dictionaries
+   install(DIRECTORY "${RSTUDIO_DEPENDENCIES_DIR}/common/dictionaries"
+           DESTINATION "${RSTUDIO_INSTALL_SUPPORTING}/resources")
+
+   # install mathjax for local html preview (but not for osx since
+   # mac webkit crashes when loading mathjax locally)
+   if(RSTUDIO_DESKTOP AND NOT APPLE)
+      install(DIRECTORY "${RSTUDIO_DEPENDENCIES_DIR}/common/mathjax"
+              DESTINATION "${RSTUDIO_INSTALL_SUPPORTING}/resources")
+   endif()
+
+   # add gpl for desktop
+   if(RSTUDIO_DESKTOP)
+      install(FILES resources/agpl-3.0-standalone.html
+              DESTINATION ${RSTUDIO_INSTALL_SUPPORTING}/resources)
+   endif()
+
    # install 64 bit binaries if we are on win64
    if(WIN32)
       if(NOT ("$ENV{PROGRAMW6432}" STREQUAL ""))
@@ -289,23 +307,6 @@ if (NOT RSTUDIO_SESSION_WIN64)
       install(FILES resources/sumatrapdfrestrict.ini
                DESTINATION  "${RSTUDIO_INSTALL_BIN}/sumatra")
    endif()
-endif()
-
-# install hunspell dictionaries
-install(DIRECTORY "${RSTUDIO_DEPENDENCIES_DIR}/common/dictionaries"
-        DESTINATION "${RSTUDIO_INSTALL_SUPPORTING}/resources")
-
-# install mathjax for local html preview (but not for osx since
-# mac webkit crashes when loading mathjax locally)
-if(RSTUDIO_DESKTOP AND NOT APPLE)
-   install(DIRECTORY "${RSTUDIO_DEPENDENCIES_DIR}/common/mathjax"
-           DESTINATION "${RSTUDIO_INSTALL_SUPPORTING}/resources")
-endif()
-
-# add gpl for desktop
-if(RSTUDIO_DESKTOP)
-   install(FILES resources/agpl-3.0-standalone.html
-           DESTINATION ${RSTUDIO_INSTALL_SUPPORTING}/resources)
 endif()
 
  # install 64-bit gcc runtime for session win64
