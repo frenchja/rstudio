@@ -295,10 +295,12 @@ endif()
 install(DIRECTORY "${RSTUDIO_DEPENDENCIES_DIR}/common/dictionaries"
         DESTINATION "${RSTUDIO_INSTALL_SUPPORTING}/resources")
 
-# install mathjax for local html preview
-install(DIRECTORY "${RSTUDIO_DEPENDENCIES_DIR}/common/mathjax"
-        DESTINATION "${RSTUDIO_INSTALL_SUPPORTING}/resources")
-
+# install mathjax for local html preview (but not for osx since
+# mac webkit crashes when loading mathjax locally)
+if(NOT APPLE)
+   install(DIRECTORY "${RSTUDIO_DEPENDENCIES_DIR}/common/mathjax"
+           DESTINATION "${RSTUDIO_INSTALL_SUPPORTING}/resources")
+endif()
 
 # add gpl for desktop
 if(RSTUDIO_DESKTOP)

@@ -652,7 +652,7 @@ std::string mathjaxJs(const std::string& mathjaxUrl,
 std::string mathjaxJs(const std::string& htmlOutput)
 {
    return mathjaxJs(
-        "https://c328740.ssl.cf1.rackcdn.com/mathjax/2.0-latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML",
+        "http://cdn.mathjax.org/mathjax/2.0-latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML",
          htmlOutput);
 }
 
@@ -661,8 +661,13 @@ std::string previewMathjaxJs(const std::string& htmlOutput)
 {
    if (session::options().programMode() == kSessionProgramModeDesktop)
    {
+#ifndef __APPLE__
       return mathjaxJs("mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML",
                        htmlOutput);
+#else
+      return mathjaxJs(htmlOutput);
+#endif
+
    }
    else
    {
