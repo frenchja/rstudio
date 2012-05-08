@@ -297,7 +297,7 @@ install(DIRECTORY "${RSTUDIO_DEPENDENCIES_DIR}/common/dictionaries"
 
 # install mathjax for local html preview (but not for osx since
 # mac webkit crashes when loading mathjax locally)
-if(NOT APPLE)
+if(RSTUDIO_DESKTOP AND NOT APPLE)
    install(DIRECTORY "${RSTUDIO_DEPENDENCIES_DIR}/common/mathjax"
            DESTINATION "${RSTUDIO_INSTALL_SUPPORTING}/resources")
 endif()
