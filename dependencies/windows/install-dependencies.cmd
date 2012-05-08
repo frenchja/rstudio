@@ -110,7 +110,7 @@ if not exist "mathjax" (
   if exist "%MATHJAX%" (
      mkdir mathjax
      echo Unzipping %MATHJAX%
-     unzip %UNZIP_ARGS% "%MATHJAX%" -d mathjax
+     unzip %UNZIP_ARGS% "%MATHJAX%"
      del "%MATHJAX%"
   )
 )
