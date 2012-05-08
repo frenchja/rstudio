@@ -40,8 +40,7 @@ then
 else
    MATHJAX=mathjax-20.zip
    download $MATHJAX
-   mkdir -p $MATHJAX_DIR
-   unzip -qd "$MATHJAX_DIR" "$MATHJAX"
+   unzip -q "$MATHJAX"
    rm $MATHJAX
 fi
 
