@@ -661,6 +661,8 @@ std::string previewMathjaxJs(const std::string& htmlOutput)
 {
    if (session::options().programMode() == kSessionProgramModeDesktop)
    {
+      // serving mathjax locally on osx crashes webkit (some type of font
+      // cache reference counting problem) so we only do this on win & linux
 #ifndef __APPLE__
       return mathjaxJs("mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML",
                        htmlOutput);
