@@ -77,7 +77,6 @@ set (SESSION_SOURCE_FILES
    modules/tex/SessionRnwConcordance.cpp
    modules/tex/SessionRnwWeave.cpp
    modules/tex/SessionSynctex.cpp
-   modules/tex/SessionTexi2Dvi.cpp
    modules/tex/SessionTexUtils.cpp
    modules/tex/SessionViewPdf.cpp
    modules/vcs/SessionVCSCore.cpp
