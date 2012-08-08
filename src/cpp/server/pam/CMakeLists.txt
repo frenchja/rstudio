@@ -19,10 +19,6 @@ file(GLOB_RECURSE PAM_HEADER_FILES "*.h*")
 # find PAM
 find_package(PAM REQUIRED)
 
-# source files
-set(PAM_SOURCE_FILES
-   PamMain.cpp
-)
 
 # set include directories
 include_directories(
@@ -31,9 +27,16 @@ include_directories(
    ${PAM_INCLUDE_DIR}
 )
 
+#### pam auth utility
+
+# source files
+set(PAM_AUTH_SOURCE_FILES
+   Pam.cpp
+   PamAuthMain.cpp
+)
 
 # define executable
-add_executable(rserver-pam ${PAM_SOURCE_FILES} ${PAM_HEADER_FILES})
+add_executable(rserver-pam ${PAM_AUTH_SOURCE_FILES} ${PAM_HEADER_FILES})
 
 # set link dependencies
 target_link_libraries(rserver-pam
