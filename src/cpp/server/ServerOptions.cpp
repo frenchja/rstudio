@@ -146,6 +146,9 @@ ProgramStatus Options::read(int argc, char * const argv[])
       ("auth-pam-helper-path",
         value<std::string>(&authPamHelperPath_)->default_value("bin/rserver-pam"),
        "path to PAM helper binary")
+      ("auth-pam-session-helper-path",
+        value<std::string>(&authPamSessionHelperPath_)->default_value("bin/rserver-pam-session"),
+       "path to PAM session helper binary")
       ("auth-pam-requires-priv",
         value<bool>(&deprecatedAuthPamRequiresPriv)->default_value(true),
         "deprecated: will always be true");

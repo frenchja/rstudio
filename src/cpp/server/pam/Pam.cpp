@@ -13,11 +13,16 @@
 
 #include "Pam.hpp"
 
+#include <iostream>
+
 #include <boost/utility.hpp>
 #include <boost/regex.hpp>
+#include <boost/format.hpp>
 
 #include <core/Log.hpp>
+#include <core/Error.hpp>
 #include <core/system/System.hpp>
+#include <core/system/PosixUser.hpp>
 
 using namespace core ;
 
@@ -191,6 +196,26 @@ int PAM::login(const std::string& username,
    }
 
    return PAM_SUCCESS;
+}
+
+int inappropriateUsage(const std::string& utility,
+                       const core::ErrorLocation& location)
+{
+   // log warning
+   boost::format fmt("Inappropriate use of %1% helper binary (user=%2%)");
+   std::string msg = boost::str(
+               fmt % utility
+                   % core::system::user::currentUserIdentity().userId);
+   core::log::logWarningMessage(msg, location);
+
+   // additional notification to the user
+   std::cerr << "\nThis binary is not designed for running this way\n"
+                "-- the system administrator has been informed\n\n";
+
+   // cause further annoyance
+   ::sleep(10);
+
+   return EXIT_FAILURE;
 }
 
 } // namespace pam

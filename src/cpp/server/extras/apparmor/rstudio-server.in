@@ -25,6 +25,7 @@ ${CMAKE_INSTALL_PREFIX}/bin/rserver {
   /tmp/rsession/streams/** rw,
 
   ${CMAKE_INSTALL_PREFIX}/bin/rserver-pam Ux,
+  ${CMAKE_INSTALL_PREFIX}/bin/rserver-pam-session Ux,
      
   ${CMAKE_INSTALL_PREFIX}/bin/rsession ux,
   ${CMAKE_INSTALL_PREFIX}/www/** r,
@@ -96,6 +97,7 @@ ${CMAKE_INSTALL_PREFIX}/bin/rserver {
      /tmp/rsession/streams/** rw,
 
      ${CMAKE_INSTALL_PREFIX}/bin/rserver-pam Ux,
+     ${CMAKE_INSTALL_PREFIX}/bin/rserver-pam-session Ux,
      
      ${CMAKE_INSTALL_PREFIX}/bin/rsession ux,
      ${CMAKE_INSTALL_PREFIX}/www/** r,

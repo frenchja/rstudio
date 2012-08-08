@@ -17,6 +17,10 @@
 
 #include <boost/utility.hpp>
 
+namespace core {
+   class ErrorLocation;
+}
+
 namespace server {
 namespace pam {
 
@@ -29,7 +33,6 @@ namespace pam {
 // stack as ftpd uses, which is similar to us.
 
 
-// Low-level C++ wrapper around PAM API.
 class PAM : boost::noncopyable
 {
 public:
@@ -47,6 +50,10 @@ private:
     pam_handle_t* pamh_;
     int status_;
 };
+
+int inappropriateUsage(const std::string& utility,
+                       const core::ErrorLocation& location);
+
 
 } // namespace pam
 } // namespace server

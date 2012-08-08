@@ -1,5 +1,5 @@
 /*
- * PamAuthMain.cpp
+ * PamSessionMain.cpp
  *
  * Copyright (C) 2009-12 by RStudio, Inc.
  *
@@ -28,7 +28,7 @@ namespace {
 
 int inappropriateUsage(const ErrorLocation& location)
 {
-   return server::pam::inappropriateUsage("rserver-pam", location);
+   return server::pam::inappropriateUsage("rserver-pam-session", location);
 }
 
 } // anonymous namespace
@@ -39,7 +39,8 @@ int main(int argc, char * const argv[])
    try
    { 
       // initialize log
-      initializeSystemLog("rserver-pam", core::system::kLogLevelWarning);
+      initializeSystemLog("rserver-pam-session",
+                          core::system::kLogLevelWarning);
 
       // ignore SIGPIPE
       Error error = core::system::ignoreSignal(core::system::SigPipe);
@@ -51,36 +52,10 @@ int main(int argc, char * const argv[])
          return inappropriateUsage(ERROR_LOCATION);
       else if (::isatty(STDOUT_FILENO))
          return inappropriateUsage(ERROR_LOCATION);
-      else if (argc != 2)
-         return inappropriateUsage(ERROR_LOCATION);
 
-      // read username from command line
-      std::string username(argv[1]);
 
-      // read password (up to 200 chars in length)
-      std::string password;
-      const int MAXPASS = 200;
-      int ch = 0;
-      int count = 0;
-      while((ch = ::fgetc(stdin)) != EOF)
-      {
-         if (++count <= MAXPASS)
-         {
-            password.push_back(static_cast<char>(ch));
-         }
-         else
-         {
-            LOG_WARNING_MESSAGE("Password exceeded maximum length for "
-                                "user " + username);
-            return EXIT_FAILURE;
-         }
-      }
+      return EXIT_SUCCESS;
 
-      // verify password
-      if (PAM(false).login(username, password) == PAM_SUCCESS)
-         return EXIT_SUCCESS;
-      else
-         return EXIT_FAILURE;
    }
    CATCH_UNEXPECTED_EXCEPTION
    

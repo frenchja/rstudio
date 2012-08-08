@@ -48,5 +48,25 @@ target_link_libraries(rserver-pam
 install(TARGETS rserver-pam DESTINATION ${RSTUDIO_INSTALL_BIN})
 
 
+#### pam session utility
+
+# source files
+set(PAM_SESSION_SOURCE_FILES
+   Pam.cpp
+   PamSessionMain.cpp
+)
+
+# define executable
+add_executable(rserver-pam-session ${PAM_SESSION_SOURCE_FILES} ${PAM_HEADER_FILES})
+
+# set link dependencies
+target_link_libraries(rserver-pam-session
+   rstudio-core
+   ${PAM_LIBRARIES}
+)
+
+# installation rules
+install(TARGETS rserver-pam-session DESTINATION ${RSTUDIO_INSTALL_BIN})
+
 
 
