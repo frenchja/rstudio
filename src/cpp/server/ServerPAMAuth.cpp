@@ -33,6 +33,8 @@
 #include <server/ServerOptions.hpp>
 #include <server/ServerUriHandlers.hpp>
 
+#include "ServerSessionManager.hpp"
+
 namespace server {
 namespace pam_auth {
 
@@ -301,6 +303,18 @@ void signOut(const std::string&,
    pResponse->setMovedTemporarily(request, auth::handler::kSignIn);
 }
 
+core::Error launchRSession(std::string rsessionPath,
+                           std::string runAsUser,
+                           util::system::ProcessConfig config,
+                           PidType* pProcessId )
+{
+   return util::system::launchChildProcess(rsessionPath,
+                                           runAsUser,
+                                           config,
+                                           pProcessId);
+}
+
+
 } // anonymous namespace
 
 Error initialize()
@@ -319,6 +333,10 @@ Error initialize()
    // add pam-specific auth handlers
    uri_handlers::addBlocking(kDoSignIn, doSignIn);
    uri_handlers::addBlocking(kPublicKey, publicKey);
+
+   // register a custom session launcher that we can use to wrap
+   // sessions within pam_session_open/pam_session_close
+   server::setSessionLauncher(launchRSession);
 
    // initialize crypto
    return core::system::crypto::rsaInit();

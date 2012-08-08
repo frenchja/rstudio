@@ -95,6 +95,11 @@ struct ProcessConfig
 
 core::Error waitForProcessExit(PidType processId);
 
+typedef boost::function<core::Error(std::string,
+                                    std::string,
+                                    ProcessConfig,
+                                    PidType*)> ChildProcessLauncher;
+
 core::Error launchChildProcess(std::string path,
                                std::string runAsUser,
                                ProcessConfig config,

@@ -208,6 +208,27 @@ std::vector<PidType> SessionManager::activePids()
    return std::vector<PidType>();
 }
 
+namespace {
+
+util::system::ChildProcessLauncher s_sessionLauncher;
+
+util::system::ChildProcessLauncher sessionLauncher()
+{
+   if (s_sessionLauncher)
+      return s_sessionLauncher;
+   else
+      return util::system::launchChildProcess;
+}
+
+} // anonymous namespace
+
+
+void setSessionLauncher(
+                  const util::system::ChildProcessLauncher& sessionLauncher)
+{
+   s_sessionLauncher = sessionLauncher;
+}
+
 
 Error launchSession(const std::string& username,
                     const core::system::Options& extraArgs,
@@ -264,10 +285,10 @@ Error launchSession(const std::string& username,
                                options.rsessionStackLimitMb() * 1024L * 1024L);
    config.userProcessesLimit = static_cast<RLimitType>(
                                options.rsessionUserProcessLimit());
-   return util::system::launchChildProcess(options.rsessionPath(),
-                                           runAsUser,
-                                           config,
-                                           pPid) ;
+   return sessionLauncher()(options.rsessionPath(),
+                            runAsUser,
+                            config,
+                            pPid) ;
 }
 
 Error launchSession(const std::string& username, PidType* pPid)

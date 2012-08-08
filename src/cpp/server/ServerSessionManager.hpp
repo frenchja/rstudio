@@ -78,6 +78,12 @@ core::Error launchSession(const std::string& username,
                           const core::system::Options& extraArgs,
                           PidType* pPid);
 
+// establish a custom session launcher -- note that this isn't threadsafe
+// so should be called from startup code
+void setSessionLauncher(
+                  const util::system::ChildProcessLauncher& sessionLauncher);
+
+
 } // namespace server
 
 #endif // SERVER_SESSION_MANAGER_HPP
