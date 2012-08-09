@@ -218,5 +218,29 @@ int inappropriateUsage(const std::string& utility,
    return EXIT_FAILURE;
 }
 
+std::string readPassword(const std::string& username)
+{
+    // read password (up to 200 chars in length)
+    std::string password;
+    const int MAXPASS = 200;
+    int ch = 0;
+    int count = 0;
+    while((ch = ::fgetc(stdin)) != EOF)
+    {
+       if (++count <= MAXPASS)
+       {
+          password.push_back(static_cast<char>(ch));
+       }
+       else
+       {
+          LOG_WARNING_MESSAGE("Password exceeded maximum length for "
+                              "user " + username);
+          return std::string();
+       }
+    }
+
+    return password;
+}
+
 } // namespace pam
 } // namespace server

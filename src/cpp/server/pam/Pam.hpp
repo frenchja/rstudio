@@ -54,6 +54,8 @@ private:
 int inappropriateUsage(const std::string& utility,
                        const core::ErrorLocation& location);
 
+std::string readPassword(const std::string& username);
+
 
 } // namespace pam
 } // namespace server

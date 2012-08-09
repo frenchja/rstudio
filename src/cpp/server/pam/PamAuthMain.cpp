@@ -57,24 +57,10 @@ int main(int argc, char * const argv[])
       // read username from command line
       std::string username(argv[1]);
 
-      // read password (up to 200 chars in length)
-      std::string password;
-      const int MAXPASS = 200;
-      int ch = 0;
-      int count = 0;
-      while((ch = ::fgetc(stdin)) != EOF)
-      {
-         if (++count <= MAXPASS)
-         {
-            password.push_back(static_cast<char>(ch));
-         }
-         else
-         {
-            LOG_WARNING_MESSAGE("Password exceeded maximum length for "
-                                "user " + username);
-            return EXIT_FAILURE;
-         }
-      }
+      // read password
+      std::string password = readPassword(username);
+      if (password.empty())
+         return EXIT_FAILURE;
 
       // verify password
       if (PAM(false).login(username, password) == PAM_SUCCESS)

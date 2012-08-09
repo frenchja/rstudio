@@ -15,9 +15,14 @@
 #include <iostream>
 #include <stdio.h>
 
+#include <boost/bind.hpp>
+
 #include <core/Error.hpp>
 #include <core/Log.hpp>
+
 #include <core/system/System.hpp>
+#include <core/system/ShellUtils.hpp>
+#include <core/system/Process.hpp>
 
 #include "Pam.hpp"
 
@@ -29,6 +34,11 @@ namespace {
 int inappropriateUsage(const ErrorLocation& location)
 {
    return server::pam::inappropriateUsage("rserver-pam-session", location);
+}
+
+void assumeUserIdentity(const std::string& username)
+{
+
 }
 
 } // anonymous namespace
@@ -52,9 +62,51 @@ int main(int argc, char * const argv[])
          return inappropriateUsage(ERROR_LOCATION);
       else if (::isatty(STDOUT_FILENO))
          return inappropriateUsage(ERROR_LOCATION);
+      else if (argc < 3)
+         return inappropriateUsage(ERROR_LOCATION);
+
+      // read username and rsession path from command line
+      std::string username(argv[1]);
+      std::string rsessionPath(argv[2]);
+
+      // copy all other command-line arguments
+      core::shell_utils::ShellArgs args;
+      for (int i = 3; i<argc; i++)
+         args << argv[i];
+
+      // read password
+      std::string password = readPassword(username);
+      if (password.empty())
+         return EXIT_FAILURE;
+
+      // initialize PAM session
+      PAM pamSession(false);
+      if (pamSession.login(username, password) == EXIT_SUCCESS)
+      {
+         // run rsession and wait for it to terminate -- the PAM destructor
+         // will take car of closing the pam session
+         core::system::ProcessOptions options;
+         options.onAfterFork = boost::bind(assumeUserIdentity, username);
+         core::system::ProcessResult result;
+         Error error = core::system::runProgram(rsessionPath,
+                                                args,
+                                                password,
+                                                options,
+                                                &result);
+         if (error)
+         {
+            LOG_ERROR(error);
+            return EXIT_FAILURE;
+         }
+
+         return EXIT_SUCCESS;
+      }
+      else
+      {
+         return EXIT_FAILURE;
+      }
 
 
-      return EXIT_SUCCESS;
 
    }
    CATCH_UNEXPECTED_EXCEPTION
