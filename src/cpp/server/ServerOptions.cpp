@@ -144,7 +144,7 @@ ProgramStatus Options::read(int argc, char * const argv[])
         value<std::string>(&authRequiredUserGroup_)->default_value(""),
         "limit to users belonging to the specified group")
       ("auth-use-pam-sessions",
-        value<bool>(&authUsePamSessions_)->default_value(true),
+        value<bool>(&authUsePamSessions_)->default_value(false),
         "use pam open/close session api")
       ("auth-pam-helper-path",
         value<std::string>(&authPamHelperPath_)->default_value("bin/rserver-pam"),
