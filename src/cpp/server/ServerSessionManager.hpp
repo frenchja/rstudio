@@ -21,8 +21,7 @@
 #include <boost/signals.hpp>
 
 #include <core/Thread.hpp>
-
-#include <server/util/system/System.hpp>
+#include <core/system/PosixSystem.hpp>
 
 namespace core {
    class Error;
@@ -81,7 +80,7 @@ core::Error launchSession(const std::string& username,
 // establish a custom session launcher -- note that this isn't threadsafe
 // so should be called from startup code
 void setSessionLauncher(
-                  const util::system::ChildProcessLauncher& sessionLauncher);
+                  const core::system::ChildProcessLauncher& sessionLauncher);
 
 
 } // namespace server

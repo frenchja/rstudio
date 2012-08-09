@@ -29,7 +29,6 @@
 
 #include <server/ServerOptions.hpp>
 
-#include <server/util/system/User.hpp>
 
 #include <server/auth/ServerValidateUser.hpp>
 
@@ -210,21 +209,21 @@ std::vector<PidType> SessionManager::activePids()
 
 namespace {
 
-util::system::ChildProcessLauncher s_sessionLauncher;
+core::system::ChildProcessLauncher s_sessionLauncher;
 
-util::system::ChildProcessLauncher sessionLauncher()
+core::system::ChildProcessLauncher sessionLauncher()
 {
    if (s_sessionLauncher)
       return s_sessionLauncher;
    else
-      return util::system::launchChildProcess;
+      return core::system::launchChildProcess;
 }
 
 } // anonymous namespace
 
 
 void setSessionLauncher(
-                  const util::system::ChildProcessLauncher& sessionLauncher)
+                  const core::system::ChildProcessLauncher& sessionLauncher)
 {
    s_sessionLauncher = sessionLauncher;
 }
@@ -274,11 +273,11 @@ Error launchSession(const std::string& username,
 
    // launch the session
    *pPid = -1;
-   std::string runAsUser = util::system::realUserIsRoot() ? username : "";
-   util::system::ProcessConfig config;
+   std::string runAsUser = core::system::realUserIsRoot() ? username : "";
+   core::system::ProcessConfig config;
    config.args = args;
    config.environment = environment;
-   config.stdStreamBehavior = util::system::StdStreamInherit;
+   config.stdStreamBehavior = core::system::StdStreamInherit;
    config.memoryLimitBytes = static_cast<RLimitType>(
                                options.rsessionMemoryLimitMb() * 1024L * 1024L);
    config.stackLimitBytes = static_cast<RLimitType>(
