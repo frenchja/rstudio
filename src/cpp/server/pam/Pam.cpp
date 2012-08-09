@@ -164,8 +164,7 @@ std::pair<int, const std::string> PAM::lastError()
          std::string(::pam_strerror(pamh_, status_)));
 }
 
-int PAM::login(const std::string& username,
-                   const std::string& password)
+int PAM::login(const std::string& username, const std::string& password)
 {
    struct pam_conv myConv;
    myConv.conv = conv;
@@ -197,6 +196,13 @@ int PAM::login(const std::string& username,
 
    return PAM_SUCCESS;
 }
+
+
+int PAM::initSession()
+{
+   return PAM_SUCCESS;
+}
+
 
 int inappropriateUsage(const std::string& utility,
                        const core::ErrorLocation& location)

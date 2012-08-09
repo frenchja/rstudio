@@ -922,7 +922,7 @@ Error launchChildProcess(std::string path,
          if (error)
             LOG_ERROR(error);
 
-         // switch user
+         // switch user if we aren't being instructed to run as root
          error = permanentlyDropPriv(runAsUser);
          if (error)
          {
@@ -1151,7 +1151,8 @@ Error temporarilyDropPriv(const std::string& newUsername)
    return Success();
 }
 
-Error permanentlyDropPriv(const std::string& newUsername)
+Error permanentlyDropPriv(const std::string& newUsername,
+                          boost::function<void()> onAfterGroupInit)
 {
    // clear error state
    errno = 0;
@@ -1175,6 +1176,10 @@ Error permanentlyDropPriv(const std::string& newUsername)
       return systemError(errno, ERROR_LOCATION);
    if (rgid != user.groupId || egid != user.groupId || sgid != user.groupId)
       return systemError(EACCES, ERROR_LOCATION);
+
+   // call optional after group init hook
+   if (onAfterGroupInit)
+      onAfterGroupInit();
 
    // set user
    if (::setresuid(user.userId, user.userId, user.userId) < 0)
@@ -1293,7 +1298,8 @@ Error temporarilyDropPriv(const std::string& newUsername)
 }
 
 
-Error permanentlyDropPriv(const std::string& newUsername)
+Error permanentlyDropPriv(const std::string& newUsername,
+                          boost::function<void()> onAfterGroupInit)
 {
    // clear error state
    errno = 0;
@@ -1314,6 +1320,10 @@ Error permanentlyDropPriv(const std::string& newUsername)
    // verify
    if (::getgid() != user.groupId || ::getegid() != user.groupId)
       return systemError(EACCES, ERROR_LOCATION);
+
+   // call optional after group init hook
+   if (onAfterGroupInit)
+      onAfterGroupInit();
 
    // set user
    if (::setreuid(user.userId, user.userId) < 0)

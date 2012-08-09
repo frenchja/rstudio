@@ -20,7 +20,8 @@
 #include <core/Error.hpp>
 #include <core/Log.hpp>
 
-#include <core/system/System.hpp>
+#include <core/system/PosixUser.hpp>
+#include <core/system/PosixSystem.hpp>
 #include <core/system/ShellUtils.hpp>
 #include <core/system/Process.hpp>
 
@@ -36,9 +37,26 @@ int inappropriateUsage(const ErrorLocation& location)
    return server::pam::inappropriateUsage("rserver-pam-session", location);
 }
 
-void assumeUserIdentity(const std::string& username)
-{
 
+void initPamSession(PAM* pPam)
+{
+   pPam->initSession();
+}
+
+void assumeUserIdentity(const std::string& username,
+                        boost::function<void()> onAfterGroupInit)
+{
+   if (core::system::realUserIsRoot())
+   {
+      Error error = core::system::permanentlyDropPriv(username,
+                                                      onAfterGroupInit);
+      if (error)
+         LOG_ERROR(error);
+   }
+   else
+   {
+      onAfterGroupInit();
+   }
 }
 
 } // anonymous namespace
@@ -65,9 +83,9 @@ int main(int argc, char * const argv[])
       else if (argc < 3)
          return inappropriateUsage(ERROR_LOCATION);
 
-      // read username and rsession path from command line
-      std::string username(argv[1]);
-      std::string rsessionPath(argv[2]);
+      // read rsession path and username from command line
+      std::string rsessionPath(argv[1]);
+      std::string username(argv[2]);
 
       // copy all other command-line arguments
       core::shell_utils::ShellArgs args;
@@ -84,9 +102,13 @@ int main(int argc, char * const argv[])
       if (pamSession.login(username, password) == EXIT_SUCCESS)
       {
          // run rsession and wait for it to terminate -- the PAM destructor
-         // will take car of closing the pam session
+         // will take care of closing the pam session
          core::system::ProcessOptions options;
-         options.onAfterFork = boost::bind(assumeUserIdentity, username);
+         boost::function<void()> onAfterInitGroups =
+                                    boost::bind(&initPamSession, &pamSession);
+         options.onAfterFork = boost::bind(assumeUserIdentity,
+                                           username,
+                                           onAfterInitGroups);
          core::system::ProcessResult result;
          Error error = core::system::runProgram(rsessionPath,
                                                 args,

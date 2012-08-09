@@ -21,6 +21,7 @@
 typedef pid_t PidType;
 typedef rlim_t RLimitType;
 
+#include <boost/function.hpp>
 
 namespace core {
    class Error;
@@ -115,7 +116,9 @@ bool effectiveUserIsRoot();
 // privillege management (not thread safe, call from main thread at app startup
 // or just after fork() prior to exec() for new processes)
 core::Error temporarilyDropPriv(const std::string& newUsername);
-core::Error permanentlyDropPriv(const std::string& newUsername);
+core::Error permanentlyDropPriv(const std::string& newUsername,
+                                boost::function<void()> onAfterGroupInit =
+                                                   boost::function<void()>());
 core::Error restorePriv();
 
 
