@@ -390,14 +390,21 @@ public class AceEditor implements DocDisplay,
       
       completionManager_ = completionManager;
       
-      widget_.getEditor().setKeyboardHandler(
-            new AceCompletionAdapter(completionManager_).getKeyboardHandler());
-
+      updateKeyboardHandlers();
+     
       getSession().setEditorMode(
             fileType_.getEditorLanguage().getParserName(),
             Desktop.isDesktop() && Desktop.getFrame().suppressSyntaxHighlighting());
       getSession().setUseWrapMode(fileType_.getWordWrap());
-      
+   }   
+   
+   private void updateKeyboardHandlers()
+   {
+      widget_.getEditor().setKeyboardHandler(null);
+      if (useVimMode_)
+         widget_.getEditor().addKeyboardHandler(KeyboardHandler.vim());  
+      widget_.getEditor().addKeyboardHandler(new AceCompletionAdapter(
+            completionManager_).getKeyboardHandler());
    }
 
    public String getCode()
@@ -1087,6 +1094,13 @@ public class AceEditor implements DocDisplay,
    {
       widget_.getEditor().getRenderer().setShowPrintMargin(on);
    }
+   
+   @Override
+   public void setUseVimMode(boolean use)
+   {
+      useVimMode_ = use;
+      updateKeyboardHandlers();
+   }
 
    public void setPadding(int padding)
    {
@@ -1494,6 +1508,7 @@ public class AceEditor implements DocDisplay,
    private CodeToolsServerOperations server_;
    private TextFileType fileType_;
    private boolean passwordMode_;
+   private boolean useVimMode_ = false;
    private RnwCompletionContext rnwContext_;
 
    private static final ExternalJavaScriptLoader aceLoader_ =
