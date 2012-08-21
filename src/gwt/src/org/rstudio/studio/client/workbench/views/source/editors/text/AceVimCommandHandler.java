@@ -25,7 +25,7 @@ public class AceVimCommandHandler implements AceKeyboardPreviewer.Handler
    @Override
    public boolean previewKeyDown(JavaScriptObject data, NativeEvent event)
    {
-      if ((event.getKeyCode() == 191) && 
+      if ((event.getKeyCode() == 191 /* '/' key */) && 
           (KeyboardShortcut.getModifierValue(event) == KeyboardShortcut.NONE) &&
           isNormalMode(data))
       {
