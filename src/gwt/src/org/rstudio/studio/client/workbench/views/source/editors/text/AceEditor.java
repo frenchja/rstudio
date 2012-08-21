@@ -403,11 +403,22 @@ public class AceEditor implements DocDisplay,
    
    private void updateKeyboardHandlers()
    {
+      // create a keyboard previewer for our special hooks
+      AceKeyboardPreviewer previewer = new AceKeyboardPreviewer(
+                                                         completionManager_);
+      
+      // reset keyboard handlers
       widget_.getEditor().setKeyboardHandler(null);
+      
+      // if required add vim handlers (to main editor and our previewer)
       if (useVimMode_)
-         widget_.getEditor().addKeyboardHandler(KeyboardHandler.vim());  
-      widget_.getEditor().addKeyboardHandler(new AceCompletionAdapter(
-            completionManager_).getKeyboardHandler());
+      {
+         widget_.getEditor().addKeyboardHandler(KeyboardHandler.vim());
+         previewer.addHandler(new AceVimCommandHandler());
+      }
+      
+      // add the previewer's handler
+      widget_.getEditor().addKeyboardHandler(previewer.getKeyboardHandler());
    }
 
    public String getCode()
