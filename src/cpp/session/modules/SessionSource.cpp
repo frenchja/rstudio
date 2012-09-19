@@ -971,7 +971,7 @@ Error initialize()
    using namespace r::function_hook;
    ExecBlock initBlock ;
    initBlock.addFunctions()
-      (bind(registerReplaceHook, "file.edit", fileEditHook, (CCODE*)NULL))
+      //(bind(registerReplaceHook, "file.edit", fileEditHook, (CCODE*)NULL))
       (bind(registerRpcMethod, "new_document", newDocument))
       (bind(registerRpcMethod, "open_document", openDocument))
       (bind(registerRpcMethod, "save_document", saveDocument))

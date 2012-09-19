@@ -851,8 +851,8 @@ Error initialize()
    using namespace r::function_hook ;
    ExecBlock initBlock ;
    initBlock.addFunctions()
-      (bind(registerReplaceHook, "startHTTPD", startHTTPDHook, (CCODE*)NULL))
-      (bind(registerReplaceHook, "stopHTTPD", stopHTTPDHook, (CCODE*)NULL))
+      //(bind(registerReplaceHook, "startHTTPD", startHTTPDHook, (CCODE*)NULL))
+      //(bind(registerReplaceHook, "stopHTTPD", stopHTTPDHook, (CCODE*)NULL))
       (bind(registerRBrowseUrlHandler, handleLocalHttpUrl))
       (bind(registerRBrowseFileHandler, handleRShowDocFile))
       (bind(registerUriHandler, kHelpLocation, handleHelpRequest))
