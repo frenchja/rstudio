@@ -838,37 +838,6 @@ void enqueFileEditEvent(const std::string& file)
    module_context::enqueClientEvent(event);
 }
 
-SEXP fileEditHook(SEXP call, SEXP op, SEXP args, SEXP rho)
-{
-   // file.edit(..., title = file, editor = getOption("editor"))
-   // see do_fileedit in platform.c
-   r::function_hook::checkArity(op, args, call);
-
-   try
-   {
-      // read and validate file name (we ignore all other parameters)
-      SEXP filenamesSEXP = CAR(args);
-      if (!r::sexp::isString(filenamesSEXP))
-         throw r::exec::RErrorException("invalid filename specification");
-
-      // extract string vector
-      std::vector<std::string> filenames;
-      Error error = r::sexp::extract(filenamesSEXP, &filenames);
-      if (error)
-         throw r::exec::RErrorException(error.summary());
-
-      // fire events
-      std::for_each(filenames.begin(), filenames.end(), enqueFileEditEvent);
-   }
-   catch(const r::exec::RErrorException& e)
-   {
-      r::exec::errorCall(call, e.message());
-   }
-   CATCH_UNEXPECTED_EXCEPTION
-
-   return R_NilValue;
-}
-
 void onSuspend(Settings*)
 {
 }
@@ -971,7 +940,6 @@ Error initialize()
    using namespace r::function_hook;
    ExecBlock initBlock ;
    initBlock.addFunctions()
-      //(bind(registerReplaceHook, "file.edit", fileEditHook, (CCODE*)NULL))
       (bind(registerRpcMethod, "new_document", newDocument))
       (bind(registerRpcMethod, "open_document", openDocument))
       (bind(registerRpcMethod, "save_document", saveDocument))
