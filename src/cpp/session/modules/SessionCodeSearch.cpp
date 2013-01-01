@@ -1387,7 +1387,7 @@ Error findFunctionInSearchPath(const json::JsonRpcRequest& request,
    return Success();
 }
 
-void onFileMonitorEnabled(const tree<core::FileInfo>& files)
+void onFileMonitorEnabled(const Tree<core::FileInfo>& files)
 {
    s_projectIndex.enqueFiles(files.begin_leaf(), files.end_leaf());
 }

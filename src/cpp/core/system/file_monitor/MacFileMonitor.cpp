@@ -49,7 +49,7 @@ public:
    FilePath rootPath;
    bool recursive;
    boost::function<bool(const FileInfo&)> filter;
-   tree<FileInfo> fileTree;
+   Tree<FileInfo> fileTree;
    Callbacks callbacks;
 };
 

@@ -131,19 +131,19 @@ boost::function<bool(const FileInfo&)> excludeHiddenFilter()
 namespace impl {
 
 Error processFileAdded(
-              tree<FileInfo>::iterator parentIt,
+              Tree<FileInfo>::iterator parentIt,
               const FileChangeEvent& fileChange,
               bool recursive,
               const boost::function<bool(const FileInfo&)>& filter,
               const boost::function<Error(const FileInfo&)>& onBeforeScanDir,
-              tree<FileInfo>* pTree,
+              Tree<FileInfo>* pTree,
               std::vector<FileChangeEvent>* pFileChanges)
 {
    // see if this node already exists. if it does then check it for changes
    // (if there are no changes then ignore). we do this because some editors
    // (for example gedit) actually save files in such a way that FileAdded
    // is generated (because they overwrite the old file with a move)
-   tree<FileInfo>::sibling_iterator it = impl::findFile(pTree->begin(parentIt),
+   Tree<FileInfo>::sibling_iterator it = impl::findFile(pTree->begin(parentIt),
                                                         pTree->end(parentIt),
                                                         fileChange.fileInfo());
    if (it != pTree->end(parentIt))
@@ -162,7 +162,7 @@ Error processFileAdded(
 
    if (recursive && shouldTraverse(fileChange.fileInfo()))
    {
-      tree<FileInfo> subTree;
+      Tree<FileInfo> subTree;
       FileScannerOptions options;
       options.recursive = true;
       options.yield = true;
@@ -173,10 +173,9 @@ Error processFileAdded(
          return error;
 
       // merge in the sub-tree
-      tree<FileInfo>::sibling_iterator addedIter =
+      Tree<FileInfo>::sibling_iterator addedIter =
          pTree->append_child(parentIt, fileChange.fileInfo());
-      pTree->insert_subtree_after(addedIter, subTree.begin());
-      pTree->erase(addedIter);
+      pTree->replace(addedIter, subTree.begin());
 
       // generate events
       std::for_each(subTree.begin(),
@@ -201,13 +200,13 @@ Error processFileAdded(
    return Success();
 }
 
-void processFileModified(tree<FileInfo>::iterator parentIt,
+void processFileModified(Tree<FileInfo>::iterator parentIt,
                          const FileChangeEvent& fileChange,
-                         tree<FileInfo>* pTree,
+                         Tree<FileInfo>* pTree,
                          std::vector<FileChangeEvent>* pFileChanges)
 {
    // search for a child with this path
-   tree<FileInfo>::sibling_iterator modIt = impl::findFile(
+   Tree<FileInfo>::sibling_iterator modIt = impl::findFile(
                                                      pTree->begin(parentIt),
                                                      pTree->end(parentIt),
                                                      fileChange.fileInfo());
@@ -226,14 +225,14 @@ void processFileModified(tree<FileInfo>::iterator parentIt,
    }
 }
 
-void processFileRemoved(tree<FileInfo>::iterator parentIt,
+void processFileRemoved(Tree<FileInfo>::iterator parentIt,
                         const FileChangeEvent& fileChange,
                         bool recursive,
-                        tree<FileInfo>* pTree,
+                        Tree<FileInfo>* pTree,
                         std::vector<FileChangeEvent>* pFileChanges)
 {
    // search for a child with this path
-   tree<FileInfo>::sibling_iterator remIt = findFile(pTree->begin(parentIt),
+   Tree<FileInfo>::sibling_iterator remIt = findFile(pTree->begin(parentIt),
                                                      pTree->end(parentIt),
                                                      fileChange.fileInfo());
 
@@ -244,7 +243,7 @@ void processFileRemoved(tree<FileInfo>::iterator parentIt,
       // remove events, otherwise can just add single event
       if (recursive && shouldTraverse(*remIt))
       {
-         tree<FileInfo> subTree(remIt);
+         Tree<FileInfo> subTree(remIt);
          std::for_each(subTree.begin(),
                        subTree.end(),
                        boost::bind(addEvent,
@@ -271,12 +270,12 @@ Error discoverAndProcessFileChanges(
    bool recursive,
    const boost::function<bool(const FileInfo&)>& filter,
    const boost::function<Error(const FileInfo&)>& onBeforeScanDir,
-   tree<FileInfo>* pTree,
+   Tree<FileInfo>* pTree,
    const  boost::function<void(const std::vector<FileChangeEvent>&)>&
                                                                onFilesChanged)
 {
    // find this path in our fileTree
-   tree<FileInfo>::iterator it = std::find(pTree->begin(),
+   Tree<FileInfo>::iterator it = std::find(pTree->begin(),
                                            pTree->end(),
                                            fileInfo);
 
@@ -285,7 +284,7 @@ Error discoverAndProcessFileChanges(
       return Success();
 
    // scan this directory into a new tree which we can compare to the old tree
-   tree<FileInfo> subdirTree;
+   Tree<FileInfo> subdirTree;
    FileScannerOptions options;
    options.recursive = recursive;
    options.yield = true;
@@ -300,7 +299,7 @@ Error discoverAndProcessFileChanges(
    {
       // check for changes on full subtree
       std::vector<FileChangeEvent> fileChanges;
-      tree<FileInfo> existingSubtree(it);
+      Tree<FileInfo> existingSubtree(it);
       collectFileChangeEvents(existingSubtree.begin(),
                               existingSubtree.end(),
                               subdirTree.begin(),
@@ -311,8 +310,7 @@ Error discoverAndProcessFileChanges(
       onFilesChanged(fileChanges);
 
       // wholesale replace subtree
-      pTree->insert_subtree_after(it, subdirTree.begin());
-      pTree->erase(it);
+      pTree->replace(it, subdirTree.begin());
    }
    else
    {
@@ -569,7 +567,7 @@ void fileMonitorThreadMain()
 
 void enqueOnRegistered(const Callbacks& callbacks,
                        Handle handle,
-                       const tree<FileInfo>& fileTree)
+                       const Tree<FileInfo>& fileTree)
 {
    if (callbacks.onRegistered)
    {

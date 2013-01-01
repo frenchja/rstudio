@@ -46,13 +46,13 @@ struct FileScannerOptions
    boost::function<Error(const FileInfo&)> onBeforeScanDir;
 };
 
-Error scanFiles(const tree<FileInfo>::iterator_base& fromNode,
+Error scanFiles(const Tree<FileInfo>::iterator_base& fromNode,
                 const FileScannerOptions& options,
-                tree<FileInfo>* pTree);
+                Tree<FileInfo>* pTree);
 
 inline Error scanFiles(const FileInfo& fromRoot,
                        const FileScannerOptions& options,
-                       tree<FileInfo>* pTree)
+                       Tree<FileInfo>* pTree)
 {
    return scanFiles(pTree->set_head(fromRoot), options, pTree);
 }
