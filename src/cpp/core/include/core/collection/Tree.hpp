@@ -55,10 +55,9 @@ public:
       return impl_.append_child(pos, x);
    }
 
-
-   sibling_iterator replace(sibling_iterator pos, const T& x)
+   void replace(sibling_iterator pos, const T& x)
    {
-      return impl_.replace(pos, x);
+      impl_.replace(pos, x);
    }
 
    void replace(sibling_iterator pos, const iterator& subtree)
