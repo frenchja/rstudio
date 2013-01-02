@@ -69,7 +69,7 @@ public:
    bool readDirChangesPending;
 
    // our own snapshot of the file tree
-   tree<FileInfo> fileTree;
+   Tree<FileInfo> fileTree;
 
    // timer for attempting restarts on a delayed basis (and counter
    // to enforce a maximum number of retries)
@@ -147,7 +147,7 @@ void processFileChange(DWORD action,
                        const FilePath& filePath,
                        bool recursive,
                        const boost::function<bool(const FileInfo&)>& filter,
-                       tree<FileInfo>* pTree,
+                       Tree<FileInfo>* pTree,
                        std::vector<FileChangeEvent>* pFileChanges)
 {
    // ignore all directory modified actions (we rely instead on the
@@ -166,7 +166,7 @@ void processFileChange(DWORD action,
 
    // get an iterator to this file's parent
    FileInfo parentFileInfo = FileInfo(filePath.parent());
-   tree<FileInfo>::iterator parentIt = impl::findFile(pTree->begin(),
+   Tree<FileInfo>::iterator parentIt = impl::findFile(pTree->begin(),
                                                       pTree->end(),
                                                       parentFileInfo);
 

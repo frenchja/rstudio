@@ -67,9 +67,9 @@ FileInfo convertToFileInfo(const FilePath& filePath, bool yield, int *pCount)
 // problem with a child dir or file, and we don't want that to
 // interfere with the caller getting a listing of everything else
 // and proceeding with its work
-Error scanFiles(const tree<FileInfo>::iterator_base& fromNode,
+Error scanFiles(const Tree<FileInfo>::iterator_base& fromNode,
                 const core::system::FileScannerOptions& options,
-                tree<FileInfo>* pTree)
+                Tree<FileInfo>* pTree)
 {
    // clear all existing
    pTree->erase_children(fromNode);
@@ -118,7 +118,7 @@ Error scanFiles(const tree<FileInfo>::iterator_base& fromNode,
       // add the correct type of FileEntry
       if (childFileInfo.isDirectory())
       {
-         tree<FileInfo>::iterator_base child =
+         Tree<FileInfo>::iterator_base child =
                               pTree->append_child(fromNode, childFileInfo);
          if (options.recursive && !childFileInfo.isSymlink())
          {
