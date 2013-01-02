@@ -46,7 +46,7 @@ struct FileScannerOptions
    boost::function<Error(const FileInfo&)> onBeforeScanDir;
 };
 
-Error scanFiles(const Tree<FileInfo>::iterator_base& fromNode,
+Error scanFiles(const Tree<FileInfo>::iterator& fromNode,
                 const FileScannerOptions& options,
                 Tree<FileInfo>* pTree);
 

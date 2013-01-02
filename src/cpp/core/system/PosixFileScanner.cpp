@@ -79,7 +79,7 @@ Error scanDir(const std::string& dirPath, std::vector<std::string>* pNames)
 
 } // anonymous namespace
 
-Error scanFiles(const Tree<FileInfo>::iterator_base& fromNode,
+Error scanFiles(const Tree<FileInfo>::iterator& fromNode,
                 const FileScannerOptions& options,
                 Tree<FileInfo>* pTree)
 {
@@ -153,8 +153,8 @@ Error scanFiles(const Tree<FileInfo>::iterator_base& fromNode,
          // add the correct type of FileEntry
          if (fileInfo.isDirectory())
          {
-            Tree<FileInfo>::iterator_base child = pTree->append_child(fromNode,
-                                                                      fileInfo);
+            Tree<FileInfo>::iterator child = pTree->append_child(fromNode,
+                                                                 fileInfo);
             // recurse if requested and this isn't a link
             if (options.recursive && !fileInfo.isSymlink())
             {

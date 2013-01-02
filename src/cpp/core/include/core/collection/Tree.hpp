@@ -31,7 +31,6 @@ class Tree
 {
 public:
 
-   typedef typename tree<T>::iterator_base iterator_base;
    typedef typename tree<T>::iterator iterator;
    typedef typename tree<T>::sibling_iterator sibling_iterator;
    typedef typename tree<T>::leaf_iterator leaf_iterator;
