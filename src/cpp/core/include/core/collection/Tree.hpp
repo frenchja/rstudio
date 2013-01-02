@@ -50,34 +50,33 @@ public:
    {
    }
 
-   iterator append_child(iterator pos, const T& x)
+   template <typename IteratorType>
+   IteratorType append_child(IteratorType pos, const T& x)
    {
       return impl_.append_child(pos, x);
    }
 
-   void replace(sibling_iterator pos, const T& x)
+   template <typename IteratorType>
+   void replace(IteratorType pos, const T& x)
    {
       impl_.replace(pos, x);
    }
 
-   void replace(sibling_iterator pos, const iterator& subtree)
+   template <typename IteratorType>
+   void replace(IteratorType pos, const iterator& subtree)
    {
       impl_.insert_subtree_after(pos, subtree);
       impl_.erase(pos);
    }
 
-   void replace(iterator pos, const iterator& subtree)
-   {
-      impl_.insert_subtree_after(pos, subtree);
-      impl_.erase(pos);
-   }
-
-   void erase(sibling_iterator it)
+   template <typename IteratorType>
+   void erase(IteratorType it)
    {
       impl_.erase(it);
    }
 
-   void erase_children(const iterator& it)
+   template <typename IteratorType>
+   void erase_children(const IteratorType& it)
    {
       impl_.erase_children(it);
    }
