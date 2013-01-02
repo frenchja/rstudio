@@ -33,7 +33,6 @@ public:
 
    typedef typename tree<T>::iterator iterator;
    typedef typename tree<T>::sibling_iterator sibling_iterator;
-   typedef typename tree<T>::leaf_iterator leaf_iterator;
 
    Tree()
       : impl_()
@@ -105,16 +104,6 @@ public:
              sibling_iterator to)
    {
       return impl_.sort(from, to, false);
-   }
-
-   leaf_iterator beginLeaf() const
-   {
-      return impl_.begin_leaf();
-   }
-
-   leaf_iterator endLeaf() const
-   {
-      return impl_.end_leaf();
    }
 
 private:
