@@ -76,7 +76,7 @@ public:
    }
 
    template <typename IteratorType>
-   void erase_children(const IteratorType& it)
+   void eraseChildren(const IteratorType& it)
    {
       impl_.erase_children(it);
    }
@@ -107,12 +107,12 @@ public:
       return impl_.sort(from, to, false);
    }
 
-   leaf_iterator begin_leaf() const
+   leaf_iterator beginLeaf() const
    {
       return impl_.begin_leaf();
    }
 
-   leaf_iterator end_leaf() const
+   leaf_iterator endLeaf() const
    {
       return impl_.end_leaf();
    }

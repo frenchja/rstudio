@@ -1389,7 +1389,7 @@ Error findFunctionInSearchPath(const json::JsonRpcRequest& request,
 
 void onFileMonitorEnabled(const Tree<core::FileInfo>& files)
 {
-   s_projectIndex.enqueFiles(files.begin_leaf(), files.end_leaf());
+   s_projectIndex.enqueFiles(files.beginLeaf(), files.endLeaf());
 }
 
 void onFilesChanged(const std::vector<core::system::FileChangeEvent>& events)

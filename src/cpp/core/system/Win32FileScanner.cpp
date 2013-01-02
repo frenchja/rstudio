@@ -72,7 +72,7 @@ Error scanFiles(const Tree<FileInfo>::iterator& fromNode,
                 Tree<FileInfo>* pTree)
 {
    // clear all existing
-   pTree->erase_children(fromNode);
+   pTree->eraseChildren(fromNode);
 
    // create FilePath for root
    FilePath rootPath(fromNode->absolutePath());
