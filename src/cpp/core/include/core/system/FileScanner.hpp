@@ -54,7 +54,8 @@ inline Error scanFiles(const FileInfo& fromRoot,
                        const FileScannerOptions& options,
                        Tree<FileInfo>* pTree)
 {
-   return scanFiles(pTree->set_head(fromRoot), options, pTree);
+   *pTree = Tree<FileInfo>(fromRoot);
+   return scanFiles(pTree->begin(), options, pTree);
 }
 
 

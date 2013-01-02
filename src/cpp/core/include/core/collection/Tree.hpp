@@ -40,14 +40,14 @@ public:
    {
    }
 
-   explicit Tree(const iterator& subTree)
-      : impl_(subTree)
+   explicit Tree(const T& x)
+      : impl_(x)
    {
    }
 
-   iterator set_head(const T& x)
+   explicit Tree(const iterator& subTree)
+      : impl_(subTree)
    {
-      return impl_.set_head(x);
    }
 
    iterator append_child(iterator pos, const T& x)
