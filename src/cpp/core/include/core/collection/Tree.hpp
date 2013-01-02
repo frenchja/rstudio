@@ -101,6 +101,12 @@ public:
       return impl_.end(it);
    }
 
+   void sort(sibling_iterator from,
+             sibling_iterator to)
+   {
+      return impl_.sort(from, to, false);
+   }
+
    leaf_iterator begin_leaf() const
    {
       return impl_.begin_leaf();
@@ -109,12 +115,6 @@ public:
    leaf_iterator end_leaf() const
    {
       return impl_.end_leaf();
-   }
-
-   void sort(sibling_iterator from,
-             sibling_iterator to)
-   {
-      return impl_.sort(from, to, false);
    }
 
 private:
