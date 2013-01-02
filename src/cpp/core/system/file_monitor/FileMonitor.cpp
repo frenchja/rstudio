@@ -143,9 +143,9 @@ Error processFileAdded(
    // (if there are no changes then ignore). we do this because some editors
    // (for example gedit) actually save files in such a way that FileAdded
    // is generated (because they overwrite the old file with a move)
-   Tree<FileInfo>::sibling_iterator it = impl::findFile(pTree->begin(parentIt),
-                                                        pTree->end(parentIt),
-                                                        fileChange.fileInfo());
+   Tree<FileInfo>::child_iterator it = impl::findFile(pTree->begin(parentIt),
+                                                      pTree->end(parentIt),
+                                                      fileChange.fileInfo());
    if (it != pTree->end(parentIt))
    {
       if (fileChange.fileInfo() != *it)
@@ -173,7 +173,7 @@ Error processFileAdded(
          return error;
 
       // merge in the sub-tree
-      Tree<FileInfo>::sibling_iterator addedIter =
+      Tree<FileInfo>::child_iterator addedIter =
          pTree->insert(parentIt, fileChange.fileInfo());
       pTree->replace(addedIter, subTree.begin());
 
@@ -192,8 +192,7 @@ Error processFileAdded(
    }
 
    // sort the container after insert
-   pTree->sort(pTree->begin(parentIt),
-               pTree->end(parentIt));
+   pTree->sortChildren(pTree->begin(parentIt), pTree->end(parentIt));
 
    return Success();
 }
@@ -204,7 +203,7 @@ void processFileModified(Tree<FileInfo>::iterator parentIt,
                          std::vector<FileChangeEvent>* pFileChanges)
 {
    // search for a child with this path
-   Tree<FileInfo>::sibling_iterator modIt = impl::findFile(
+   Tree<FileInfo>::child_iterator modIt = impl::findFile(
                                                      pTree->begin(parentIt),
                                                      pTree->end(parentIt),
                                                      fileChange.fileInfo());
@@ -230,9 +229,9 @@ void processFileRemoved(Tree<FileInfo>::iterator parentIt,
                         std::vector<FileChangeEvent>* pFileChanges)
 {
    // search for a child with this path
-   Tree<FileInfo>::sibling_iterator remIt = findFile(pTree->begin(parentIt),
-                                                     pTree->end(parentIt),
-                                                     fileChange.fileInfo());
+   Tree<FileInfo>::child_iterator remIt = findFile(pTree->begin(parentIt),
+                                                   pTree->end(parentIt),
+                                                   fileChange.fileInfo());
 
    // only generate actions if the item was found in the tree
    if (remIt != pTree->end(parentIt))

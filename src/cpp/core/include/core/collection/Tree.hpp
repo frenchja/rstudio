@@ -32,7 +32,7 @@ class Tree
 public:
 
    typedef typename tree<T>::iterator iterator;
-   typedef typename tree<T>::sibling_iterator sibling_iterator;
+   typedef typename tree<T>::sibling_iterator child_iterator;
 
    Tree()
       : impl_()
@@ -90,18 +90,18 @@ public:
       return impl_.end();
    }
 
-   sibling_iterator begin(const iterator& it) const
+   child_iterator begin(const iterator& it) const
    {
       return impl_.begin(it);
    }
 
-   sibling_iterator end(const iterator& it) const
+   child_iterator end(const iterator& it) const
    {
       return impl_.end(it);
    }
 
-   void sort(sibling_iterator from,
-             sibling_iterator to)
+   void sortChildren(child_iterator from,
+                     child_iterator to)
    {
       return impl_.sort(from, to, false);
    }
