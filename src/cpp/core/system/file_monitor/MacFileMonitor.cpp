@@ -49,7 +49,7 @@ public:
    FilePath rootPath;
    bool recursive;
    boost::function<bool(const FileInfo&)> filter;
-   tree<FileInfo> fileTree;
+   tcl::unique_tree<FileInfo> fileTree;
    Callbacks callbacks;
 };
 
