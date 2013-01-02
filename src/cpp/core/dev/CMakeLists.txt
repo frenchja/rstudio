@@ -18,7 +18,7 @@ file(GLOB_RECURSE CORE_DEV_HEADER_FILES "*.h*")
 
 # source files
 set(CORE_DEV_SOURCE_FILES 
-   Main.cpp
+   TreeMain.cpp
 )
 
 # set include directories
