@@ -172,7 +172,7 @@ public:
    FilePath rootPath;
    bool recursive;
    boost::function<bool(const FileInfo&)> filter;
-   tree<FileInfo> fileTree;
+   Tree<FileInfo> fileTree;
    Callbacks callbacks;
 };
 
@@ -310,7 +310,7 @@ Error processEvent(FileEventContext* pContext,
          return Success();
 
       // get an iterator to the parent dir
-      tree<FileInfo>::iterator parentIt = impl::findFile(
+      Tree<FileInfo>::iterator parentIt = impl::findFile(
                                                    pContext->fileTree.begin(),
                                                    pContext->fileTree.end(),
                                                    watch.path);
