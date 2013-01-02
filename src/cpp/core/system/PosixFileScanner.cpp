@@ -79,12 +79,12 @@ Error scanDir(const std::string& dirPath, std::vector<std::string>* pNames)
 
 } // anonymous namespace
 
-Error scanFiles(const tree<FileInfo>::iterator_base& fromNode,
+Error scanFiles(const tcl::unique_tree<FileInfo>::iterator& fromNode,
                 const FileScannerOptions& options,
-                tree<FileInfo>* pTree)
+                tcl::unique_tree<FileInfo>* pTree)
 {
    // clear all existing
-   pTree->erase_children(fromNode);
+   fromNode.node()->clear();
 
    // create FilePath for root
    FilePath rootPath(fromNode->absolutePath());
@@ -153,8 +153,9 @@ Error scanFiles(const tree<FileInfo>::iterator_base& fromNode,
          // add the correct type of FileEntry
          if (fileInfo.isDirectory())
          {
-            tree<FileInfo>::iterator_base child = pTree->append_child(fromNode,
+            tcl::unique_tree<FileInfo>::iterator child = fromNode.node()->insert(
                                                                       fileInfo);
+
             // recurse if requested and this isn't a link
             if (options.recursive && !fileInfo.isSymlink())
             {
@@ -170,7 +171,7 @@ Error scanFiles(const tree<FileInfo>::iterator_base& fromNode,
          }
          else
          {
-            pTree->append_child(fromNode, fileInfo);
+            fromNode.node()->insert(fileInfo);
          }
       }
    }
