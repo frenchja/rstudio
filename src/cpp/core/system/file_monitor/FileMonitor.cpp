@@ -193,9 +193,7 @@ Error processFileAdded(
 
    // sort the container after insert
    pTree->sort(pTree->begin(parentIt),
-               pTree->end(parentIt),
-               fileInfoPathLessThan,
-               false);
+               pTree->end(parentIt));
 
    return Success();
 }

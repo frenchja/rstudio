@@ -112,16 +112,11 @@ public:
       return impl_.end_leaf();
    }
 
-   template<class StrictWeakOrdering>
    void sort(sibling_iterator from,
-             sibling_iterator to,
-             StrictWeakOrdering comp,
-             bool deep=false)
+             sibling_iterator to)
    {
-      return impl_.sort(from, to, comp, deep);
+      return impl_.sort(from, to, false);
    }
-
-
 
 private:
    tree<T> impl_;
