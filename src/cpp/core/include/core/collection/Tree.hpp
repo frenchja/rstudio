@@ -51,7 +51,7 @@ public:
    }
 
    template <typename IteratorType>
-   IteratorType append_child(IteratorType pos, const T& x)
+   IteratorType insert(IteratorType pos, const T& x)
    {
       return impl_.append_child(pos, x);
    }

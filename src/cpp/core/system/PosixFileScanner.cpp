@@ -153,8 +153,7 @@ Error scanFiles(const Tree<FileInfo>::iterator& fromNode,
          // add the correct type of FileEntry
          if (fileInfo.isDirectory())
          {
-            Tree<FileInfo>::iterator child = pTree->append_child(fromNode,
-                                                                 fileInfo);
+            Tree<FileInfo>::iterator child = pTree->insert(fromNode, fileInfo);
             // recurse if requested and this isn't a link
             if (options.recursive && !fileInfo.isSymlink())
             {
@@ -170,7 +169,7 @@ Error scanFiles(const Tree<FileInfo>::iterator& fromNode,
          }
          else
          {
-            pTree->append_child(fromNode, fileInfo);
+            pTree->insert(fromNode, fileInfo);
          }
       }
    }

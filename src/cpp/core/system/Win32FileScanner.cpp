@@ -119,7 +119,7 @@ Error scanFiles(const Tree<FileInfo>::iterator& fromNode,
       if (childFileInfo.isDirectory())
       {
          Tree<FileInfo>::iterator child =
-                              pTree->append_child(fromNode, childFileInfo);
+                              pTree->insert(fromNode, childFileInfo);
          if (options.recursive && !childFileInfo.isSymlink())
          {
             Error error = scanFiles(child, options, pTree);
@@ -130,7 +130,7 @@ Error scanFiles(const Tree<FileInfo>::iterator& fromNode,
       }
       else
       {
-         pTree->append_child(fromNode, childFileInfo);
+         pTree->insert(fromNode, childFileInfo);
       }
    }
 

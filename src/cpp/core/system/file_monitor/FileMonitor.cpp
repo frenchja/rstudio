@@ -174,7 +174,7 @@ Error processFileAdded(
 
       // merge in the sub-tree
       Tree<FileInfo>::sibling_iterator addedIter =
-         pTree->append_child(parentIt, fileChange.fileInfo());
+         pTree->insert(parentIt, fileChange.fileInfo());
       pTree->replace(addedIter, subTree.begin());
 
       // generate events
@@ -187,7 +187,7 @@ Error processFileAdded(
    }
    else
    {
-      pTree->append_child(parentIt, fileChange.fileInfo());
+      pTree->insert(parentIt, fileChange.fileInfo());
       pFileChanges->push_back(fileChange);
    }
 
