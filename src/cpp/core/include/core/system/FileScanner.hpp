@@ -54,8 +54,7 @@ inline Error scanFiles(const FileInfo& fromRoot,
                        const FileScannerOptions& options,
                        tcl::unique_tree<FileInfo>* pTree)
 {
-   *pTree = tcl::unique_tree<FileInfo>(fromRoot);
-   return scanFiles(pTree->begin(), options, pTree);
+   return scanFiles(pTree->insert(fromRoot), options, pTree);
 }
 
 
