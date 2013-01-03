@@ -172,7 +172,7 @@ public:
    FilePath rootPath;
    bool recursive;
    boost::function<bool(const FileInfo&)> filter;
-   tree<FileInfo> fileTree;
+   tcl::unique_tree<FileInfo> fileTree;
    Callbacks callbacks;
 };
 
@@ -310,10 +310,9 @@ Error processEvent(FileEventContext* pContext,
          return Success();
 
       // get an iterator to the parent dir
-      tree<FileInfo>::iterator parentIt = impl::findFile(
-                                                   pContext->fileTree.begin(),
-                                                   pContext->fileTree.end(),
-                                                   watch.path);
+      FileInfo parentDir(watch.path, true);
+      tcl::unique_tree<FileInfo>::iterator parentIt =
+                           pContext->fileTree.find_deep(parentDir);
 
       // if we can't find a parent then return (this directory may have
       // been excluded from scanning due to a filter)
