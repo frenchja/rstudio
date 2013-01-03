@@ -67,15 +67,15 @@ FileInfo convertToFileInfo(const FilePath& filePath, bool yield, int *pCount)
 // problem with a child dir or file, and we don't want that to
 // interfere with the caller getting a listing of everything else
 // and proceeding with its work
-Error scanFiles(const tcl::unique_tree<FileInfo>::iterator& fromNode,
+Error scanFiles(tcl::unique_tree<FileInfo>::tree_type& fromNode,
                 const core::system::FileScannerOptions& options,
                 tcl::unique_tree<FileInfo>* pTree)
 {
    // clear all existing
-   fromNode.node()->clear();
+   fromNode.clear();
 
    // create FilePath for root
-   FilePath rootPath(fromNode->absolutePath());
+   FilePath rootPath(fromNode.get()->absolutePath());
 
    // yield if requested (only applies to recursive scans)
    if (options.recursive && options.yield)
@@ -84,7 +84,7 @@ Error scanFiles(const tcl::unique_tree<FileInfo>::iterator& fromNode,
    // call onBeforeScanDir hook
    if (options.onBeforeScanDir)
    {
-      Error error = options.onBeforeScanDir(*fromNode);
+      Error error = options.onBeforeScanDir(*(fromNode.get()));
       if (error)
          return error;
    }
@@ -119,10 +119,10 @@ Error scanFiles(const tcl::unique_tree<FileInfo>::iterator& fromNode,
       if (childFileInfo.isDirectory())
       {
          tcl::unique_tree<FileInfo>::iterator child
-                              = fromNode.node()->insert(childFileInfo);
+                              = fromNode.insert(childFileInfo);
          if (options.recursive && !childFileInfo.isSymlink())
          {
-            Error error = scanFiles(child, options, pTree);
+            Error error = scanFiles(*child.node(), options, pTree);
             if (error &&
                (error.code() != boost::system::windows_error::path_not_found))
                LOG_ERROR(error);
@@ -130,7 +130,7 @@ Error scanFiles(const tcl::unique_tree<FileInfo>::iterator& fromNode,
       }
       else
       {
-         fromNode.node()->insert(childFileInfo);
+         fromNode.insert(childFileInfo);
       }
    }
 
