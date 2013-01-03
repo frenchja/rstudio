@@ -69,7 +69,7 @@ public:
    bool readDirChangesPending;
 
    // our own snapshot of the file tree
-   tree<FileInfo> fileTree;
+   tcl::unique_tree<FileInfo> fileTree;
 
    // timer for attempting restarts on a delayed basis (and counter
    // to enforce a maximum number of retries)
@@ -147,7 +147,7 @@ void processFileChange(DWORD action,
                        const FilePath& filePath,
                        bool recursive,
                        const boost::function<bool(const FileInfo&)>& filter,
-                       tree<FileInfo>* pTree,
+                       tcl::unique_tree<FileInfo>* pTree,
                        std::vector<FileChangeEvent>* pFileChanges)
 {
    // ignore all directory modified actions (we rely instead on the
@@ -166,9 +166,8 @@ void processFileChange(DWORD action,
 
    // get an iterator to this file's parent
    FileInfo parentFileInfo = FileInfo(filePath.parent());
-   tree<FileInfo>::iterator parentIt = impl::findFile(pTree->begin(),
-                                                      pTree->end(),
-                                                      parentFileInfo);
+   tcl::unique_tree<FileInfo>::iterator parentIt
+                                    = pTree->find_deep(parentFileInfo);
 
    // if we can't find a parent then return (this directory may have
    // been excluded from scanning due to a filter)

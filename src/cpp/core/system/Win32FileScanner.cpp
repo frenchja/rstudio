@@ -67,12 +67,12 @@ FileInfo convertToFileInfo(const FilePath& filePath, bool yield, int *pCount)
 // problem with a child dir or file, and we don't want that to
 // interfere with the caller getting a listing of everything else
 // and proceeding with its work
-Error scanFiles(const tree<FileInfo>::iterator_base& fromNode,
+Error scanFiles(const tcl::unique_tree<FileInfo>::iterator& fromNode,
                 const core::system::FileScannerOptions& options,
-                tree<FileInfo>* pTree)
+                tcl::unique_tree<FileInfo>* pTree)
 {
    // clear all existing
-   pTree->erase_children(fromNode);
+   fromNode.node()->clear();
 
    // create FilePath for root
    FilePath rootPath(fromNode->absolutePath());
@@ -118,8 +118,8 @@ Error scanFiles(const tree<FileInfo>::iterator_base& fromNode,
       // add the correct type of FileEntry
       if (childFileInfo.isDirectory())
       {
-         tree<FileInfo>::iterator_base child =
-                              pTree->append_child(fromNode, childFileInfo);
+         tcl::unique_tree<FileInfo>::iterator child
+                              = fromNode.node()->insert(childFileInfo);
          if (options.recursive && !childFileInfo.isSymlink())
          {
             Error error = scanFiles(child, options, pTree);
@@ -130,7 +130,7 @@ Error scanFiles(const tree<FileInfo>::iterator_base& fromNode,
       }
       else
       {
-         pTree->append_child(fromNode, childFileInfo);
+         fromNode.node()->insert(childFileInfo);
       }
    }
 
