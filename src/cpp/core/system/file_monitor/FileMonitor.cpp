@@ -150,8 +150,8 @@ Error processFileAdded(
       if (fileChange.fileInfo() != *it)
       {
          // replace it
-         pTree->insert(it, fileChange.fileInfo());
-         pTree->erase(it);
+         parentIt.node()->insert(it, fileChange.fileInfo());
+         parentIt.node()->erase(it);
 
          // add it to the fileChanges
          pFileChanges->push_back(FileChangeEvent(FileChangeEvent::FileModified,
@@ -209,8 +209,8 @@ void processFileModified(tcl::unique_tree<FileInfo>::iterator parentIt,
        !sizeAndLastWriteTimeAreEqual(fileChange.fileInfo(), *modIt))
    {
       // replace it
-      pTree->insert(modIt, fileChange.fileInfo());
-      pTree->erase(modIt);
+      parentIt.node()->insert(modIt, fileChange.fileInfo());
+      parentIt.node()->erase(modIt);
 
       // add it to the fileChanges
       pFileChanges->push_back(fileChange);
@@ -251,7 +251,7 @@ void processFileRemoved(tcl::unique_tree<FileInfo>::iterator parentIt,
       }
 
       // remove it from the tree
-      pTree->erase(remIt);
+      parentIt.node()->erase(remIt);
    }
 }
 
@@ -297,8 +297,11 @@ Error discoverAndProcessFileChanges(
       onFilesChanged(fileChanges);
 
       // wholesale replace subtree
-      pTree->insert(it, subdirTree);
-      pTree->erase(it);
+      tcl::unique_tree<FileInfo>::tree_type* pParent = it.node()->parent();
+      if (pParent == NULL)
+         pParent = pTree;
+      pParent->insert(it, subdirTree);
+      pParent->erase(it);
    }
    else
    {
