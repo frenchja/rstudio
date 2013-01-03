@@ -150,8 +150,8 @@ Error processFileAdded(
       if (fileChange.fileInfo() != *it)
       {
          // replace it
-         parentIt.node()->insert(it, fileChange.fileInfo());
          parentIt.node()->erase(it);
+         parentIt.node()->insert(fileChange.fileInfo());
 
          // add it to the fileChanges
          pFileChanges->push_back(FileChangeEvent(FileChangeEvent::FileModified,
@@ -209,8 +209,8 @@ void processFileModified(tcl::unique_tree<FileInfo>::iterator parentIt,
        !sizeAndLastWriteTimeAreEqual(fileChange.fileInfo(), *modIt))
    {
       // replace it
-      parentIt.node()->insert(modIt, fileChange.fileInfo());
       parentIt.node()->erase(modIt);
+      parentIt.node()->insert(fileChange.fileInfo());
 
       // add it to the fileChanges
       pFileChanges->push_back(fileChange);
@@ -300,8 +300,8 @@ Error discoverAndProcessFileChanges(
       tcl::unique_tree<FileInfo>::tree_type* pParent = it.node()->parent();
       if (pParent == NULL)
          pParent = pTree;
-      pParent->insert(it, subdirTree);
       pParent->erase(it);
+      pParent->insert(subdirTree);
    }
    else
    {
