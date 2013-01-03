@@ -143,9 +143,10 @@ Error processFileAdded(
    // (if there are no changes then ignore). we do this because some editors
    // (for example gedit) actually save files in such a way that FileAdded
    // is generated (because they overwrite the old file with a move)
-   tcl::unique_tree<FileInfo>::iterator it = impl::findFile(parentIt.node()->begin(),
-                                                          parentIt.node()->end(),
-                                                          fileChange.fileInfo());
+   tcl::unique_tree<FileInfo>::iterator it = impl::findFile(
+                                                      parentIt.node()->begin(),
+                                                      parentIt.node()->end(),
+                                                      fileChange.fileInfo());
    if (it != parentIt.node()->end())
    {
       if (fileChange.fileInfo() != *it)
@@ -227,9 +228,10 @@ void processFileRemoved(tcl::unique_tree<FileInfo>::iterator parentIt,
                         std::vector<FileChangeEvent>* pFileChanges)
 {
    // search for a child with this path
-   tcl::unique_tree<FileInfo>::iterator remIt = findFile(parentIt.node()->begin(),
-                                                       parentIt.node()->end(),
-                                                       fileChange.fileInfo());
+   tcl::unique_tree<FileInfo>::iterator remIt = findFile(
+                                                      parentIt.node()->begin(),
+                                                      parentIt.node()->end(),
+                                                      fileChange.fileInfo());
 
    // only generate actions if the item was found in the tree
    if (remIt != parentIt.node()->end())
