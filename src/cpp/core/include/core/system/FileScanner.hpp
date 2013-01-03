@@ -46,7 +46,7 @@ struct FileScannerOptions
    boost::function<Error(const FileInfo&)> onBeforeScanDir;
 };
 
-Error scanFiles(const tcl::unique_tree<FileInfo>::iterator& fromNode,
+Error scanFiles(tcl::unique_tree<FileInfo>::tree_type& fromNode,
                 const FileScannerOptions& options,
                 tcl::unique_tree<FileInfo>* pTree);
 
@@ -54,7 +54,8 @@ inline Error scanFiles(const FileInfo& fromRoot,
                        const FileScannerOptions& options,
                        tcl::unique_tree<FileInfo>* pTree)
 {
-   return scanFiles(pTree->insert(fromRoot), options, pTree);
+   *pTree = tcl::unique_tree<FileInfo>(fromRoot);
+   return scanFiles(*pTree, options, pTree);
 }
 
 

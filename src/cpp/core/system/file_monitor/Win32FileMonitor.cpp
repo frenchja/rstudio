@@ -159,7 +159,7 @@ void processFileChange(DWORD action,
    // does for any reason we want to prevent it from interfering
    // with the logic below (which assumes a child path)
    if (filePath.isDirectory() &&
-      (filePath.absolutePath() == pTree->begin()->absolutePath()))
+      (filePath.absolutePath() == pTree->get()->absolutePath()))
    {
       return;
    }
@@ -326,7 +326,7 @@ void restartMonitoring(FileEventContext* pContext)
 
    // full recursive scan to detect changes and refresh the tree
    error = impl::discoverAndProcessFileChanges(
-                                       *(pContext->fileTree.begin()),
+                                       *(pContext->fileTree.get()),
                                        pContext->recursive,
                                        pContext->filter,
                                        &(pContext->fileTree),

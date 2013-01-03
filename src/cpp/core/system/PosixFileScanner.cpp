@@ -79,15 +79,15 @@ Error scanDir(const std::string& dirPath, std::vector<std::string>* pNames)
 
 } // anonymous namespace
 
-Error scanFiles(const tcl::unique_tree<FileInfo>::iterator& fromNode,
+Error scanFiles(tcl::unique_tree<FileInfo>::tree_type& fromNode,
                 const FileScannerOptions& options,
                 tcl::unique_tree<FileInfo>* pTree)
 {
    // clear all existing
-   fromNode.node()->clear();
+   fromNode.clear();
 
    // create FilePath for root
-   FilePath rootPath(fromNode->absolutePath());
+   FilePath rootPath(fromNode.get()->absolutePath());
 
    // yield if requested (only applies to recursive scans)
    if (options.recursive && options.yield)
@@ -96,14 +96,14 @@ Error scanFiles(const tcl::unique_tree<FileInfo>::iterator& fromNode,
    // call onBeforeScanDir hook
    if (options.onBeforeScanDir)
    {
-      Error error = options.onBeforeScanDir(*fromNode);
+      Error error = options.onBeforeScanDir(*fromNode.get());
       if (error)
          return error;
    }
 
    // read directory contents
    std::vector<std::string> names;
-   Error error = scanDir(fromNode->absolutePath(), &names);
+   Error error = scanDir(fromNode.get()->absolutePath(), &names);
    if (error)
       return error;
 
@@ -153,7 +153,7 @@ Error scanFiles(const tcl::unique_tree<FileInfo>::iterator& fromNode,
          // add the correct type of FileEntry
          if (fileInfo.isDirectory())
          {
-            tcl::unique_tree<FileInfo>::iterator child = fromNode.node()->insert(
+            tcl::unique_tree<FileInfo>::iterator child = fromNode.insert(
                                                                       fileInfo);
 
             // recurse if requested and this isn't a link
@@ -164,14 +164,14 @@ Error scanFiles(const tcl::unique_tree<FileInfo>::iterator& fromNode,
                // to cause us to abort the entire scan. yes the tree
                // will be incomplete however it will be even more incompete
                // if we fail entirely
-               Error error = scanFiles(child, options, pTree);
+               Error error = scanFiles(*child.node(), options, pTree);
                if (error)
                   LOG_ERROR(error);
             }
          }
          else
          {
-            fromNode.node()->insert(fileInfo);
+            fromNode.insert(fileInfo);
          }
       }
    }
