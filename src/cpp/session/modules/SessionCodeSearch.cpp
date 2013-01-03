@@ -421,6 +421,9 @@ private:
 
    static bool isSourceFile(const FileInfo& fileInfo)
    {
+      if (fileInfo.isDirectory())
+         return false;
+
       FilePath filePath(fileInfo.absolutePath());
 
       // if we are in a package project then screen our src- files
