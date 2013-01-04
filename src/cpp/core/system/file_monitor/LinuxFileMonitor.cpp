@@ -311,16 +311,16 @@ Error processEvent(FileEventContext* pContext,
 
       // get an iterator to the parent dir
       FileInfo parentDir(watch.path, true);
-      tcl::unique_tree<FileInfo>::iterator parentIt =
-                           pContext->fileTree.find_deep(parentDir);
+      tcl::unique_tree<FileInfo>::tree_type* pParentNode
+                           = impl::findNode(pContext->fileTree, parentDir);
 
       // if we can't find a parent then return (this directory may have
       // been excluded from scanning due to a filter)
-      if (parentIt == pContext->fileTree.end())
+      if (pParentNode == NULL)
          return Success();
 
       // get file info
-      FilePath filePath = FilePath(parentIt->absolutePath()).complete(
+      FilePath filePath = FilePath(pParentNode->get()->absolutePath()).complete(
                                                                  pEvent->name);
 
 
@@ -348,7 +348,7 @@ Error processEvent(FileEventContext* pContext,
             // generate events
             FileChangeEvent event(FileChangeEvent::FileRemoved, fileInfo);
             std::vector<FileChangeEvent> removeEvents;
-            impl::processFileRemoved(parentIt,
+            impl::processFileRemoved(pParentNode,
                                      event,
                                      pContext->recursive,
                                      &pContext->fileTree,
@@ -379,7 +379,7 @@ Error processEvent(FileEventContext* pContext,
          case FileChangeEvent::FileAdded:
          {
             FileChangeEvent event(FileChangeEvent::FileAdded, fileInfo);
-            Error error = impl::processFileAdded(parentIt,
+            Error error = impl::processFileAdded(pParentNode,
                                                  event,
                                                  pContext->recursive,
                                                  pContext->filter,
@@ -399,7 +399,7 @@ Error processEvent(FileEventContext* pContext,
          case FileChangeEvent::FileModified:
          {
             FileChangeEvent event(FileChangeEvent::FileModified, fileInfo);
-            impl::processFileModified(parentIt,
+            impl::processFileModified(pParentNode,
                                       event,
                                       &pContext->fileTree,
                                       pFileChanges);

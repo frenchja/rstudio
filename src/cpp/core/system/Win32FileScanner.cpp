@@ -119,7 +119,7 @@ Error scanFiles(tcl::unique_tree<FileInfo>::tree_type& fromNode,
       if (childFileInfo.isDirectory())
       {
          tcl::unique_tree<FileInfo>::iterator child
-                              = fromNode.insert(childFileInfo);
+                              = fromNode.insert(fromNode.end(), childFileInfo);
          if (options.recursive && !childFileInfo.isSymlink())
          {
             Error error = scanFiles(*child.node(), options, pTree);
@@ -130,7 +130,7 @@ Error scanFiles(tcl::unique_tree<FileInfo>::tree_type& fromNode,
       }
       else
       {
-         fromNode.insert(childFileInfo);
+         fromNode.insert(fromNode.end(), childFileInfo);
       }
    }
 

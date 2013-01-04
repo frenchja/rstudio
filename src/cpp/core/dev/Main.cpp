@@ -77,16 +77,6 @@ int test_main(int argc, char * argv[])
       // initialize log
       initializeSystemLog("coredev", core::system::kLogLevelWarning);
 
-      // scan files
-      tcl::unique_tree<FileInfo> scanTree;
-      core::system::FileScannerOptions options;
-      options.recursive = true;
-      Error error = core::system::scanFiles(FileInfo("/Users/jjallaire/Dictionaries", true),
-                                            options,
-                                            &scanTree);
-      if (error)
-         LOG_ERROR(error);
-
       // initialize root with constructor
       FileInfo rootFile("/root", true);
       tree<FileInfo> tree1(rootFile);
@@ -212,20 +202,13 @@ int test_main(int argc, char * argv[])
       itroot2.node()->insert(subTree2);
       BOOST_CHECK(areEqual(tree1, tree2));
 
-      /*
-      tree2.insert(subtreeIter2, subTree2);
-
-      itroot2 = tree2.find(file1);
-      itroot2.node()->erase(subtreeIter2);
-      itroot2.node()->insert(subTree2);
+      // replace entire tree
+      tree1.insert_subtree_after(tree1.begin(), subTree1.begin());
+      tree1.erase(tree1.begin());
+      tree2 = subTree2;
       BOOST_CHECK(areEqual(tree1, tree2));
-      */
 
       print(tree1, tree2);
-
-
-
-
 
       return EXIT_SUCCESS;
    }
