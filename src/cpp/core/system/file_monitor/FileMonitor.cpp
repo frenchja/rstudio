@@ -165,7 +165,7 @@ Error processFileAdded(
       {
          // replace it
          pParentNode->erase(it);
-         pParentNode->insert(fileChange.fileInfo());
+         pParentNode->insert(pParentNode->end(), fileChange.fileInfo());
 
          // add it to the fileChanges
          pFileChanges->push_back(FileChangeEvent(FileChangeEvent::FileModified,
@@ -187,7 +187,7 @@ Error processFileAdded(
          return error;
 
       // merge in the sub-tree
-      pParentNode->insert(subTree);
+      pParentNode->insert(pParentNode->end(), subTree);
 
       // generate events
       std::for_each(subTree.pre_order_begin(),
@@ -199,7 +199,7 @@ Error processFileAdded(
    }
    else
    {
-      pParentNode->insert(fileChange.fileInfo());
+      pParentNode->insert(pParentNode->end(), fileChange.fileInfo());
       pFileChanges->push_back(fileChange);
    }
 
@@ -226,7 +226,7 @@ void processFileModified(tcl::unique_tree<FileInfo>::tree_type* pParentNode,
    {
       // replace it
       pParentNode->erase(modIt);
-      pParentNode->insert(fileChange.fileInfo());
+      pParentNode->insert(pParentNode->end(), fileChange.fileInfo());
 
       // add it to the fileChanges
       pFileChanges->push_back(fileChange);
