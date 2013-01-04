@@ -379,8 +379,6 @@ void ProjectContext::fileMonitorRegistered(
                               core::system::file_monitor::Handle handle,
                               const std::vector<core::FileInfo>& files)
 {
-   std::cerr << "Project file monitor registered" << std::endl;
-
    // update state
    hasFileMonitor_ = true;
 
