@@ -167,7 +167,7 @@ void processFileChange(DWORD action,
    // get an iterator to this file's parent
    FileInfo parentFileInfo = FileInfo(filePath.parent());
    tcl::unique_tree<FileInfo>::tree_type* pParentNode
-                        = impl::findNode(pContext->fileTree, parentFileInfo);
+                                 = impl::findNode(pTree, parentFileInfo);
 
    // if we can't find a parent then return (this directory may have
    // been excluded from scanning due to a filter)
@@ -187,7 +187,7 @@ void processFileChange(DWORD action,
       case FILE_ACTION_RENAMED_NEW_NAME:
       {
          FileChangeEvent event(FileChangeEvent::FileAdded, fileInfo);
-         Error error = impl::processFileAdded(parentNode,
+         Error error = impl::processFileAdded(pParentNode,
                                               event,
                                               recursive,
                                               filter,
@@ -201,7 +201,7 @@ void processFileChange(DWORD action,
       case FILE_ACTION_RENAMED_OLD_NAME:
       {
          FileChangeEvent event(FileChangeEvent::FileRemoved, fileInfo);
-         impl::processFileRemoved(parentNode,
+         impl::processFileRemoved(pParentNode,
                                   event,
                                   recursive,
                                   pTree,
@@ -211,7 +211,7 @@ void processFileChange(DWORD action,
       case FILE_ACTION_MODIFIED:
       {
          FileChangeEvent event(FileChangeEvent::FileModified, fileInfo);
-         impl::processFileModified(parentNode, event, pTree, pFileChanges);
+         impl::processFileModified(pParentNode, event, pTree, pFileChanges);
          break;
       }
    }
