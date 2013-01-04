@@ -252,8 +252,8 @@ void processFileRemoved(tcl::unique_tree<FileInfo>::tree_type* pParentNode,
       // remove events, otherwise can just add single event
       if (recursive && shouldTraverse(*remIt))
       {
-         std::for_each(pParentNode->pre_order_begin(),
-                       pParentNode->pre_order_end(),
+         std::for_each(remIt.node()->pre_order_begin(),
+                       remIt.node()->pre_order_end(),
                        boost::bind(addEvent,
                                    FileChangeEvent::FileRemoved,
                                    _1,
