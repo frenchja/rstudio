@@ -125,7 +125,7 @@ FileInfo normalizeFileScannerPath(const FileInfo& fileInfo)
 void FilesListingMonitor::onRegistered(core::system::file_monitor::Handle handle,
                                        const FilePath& filePath,
                                        const std::vector<FileInfo>& prevFiles,
-                                       const tcl::unique_tree<core::FileInfo>& files)
+                                       const std::vector<core::FileInfo>& files)
 {
    // set path and current handle
    currentPath_ = filePath;

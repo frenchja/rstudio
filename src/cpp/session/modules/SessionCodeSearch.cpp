@@ -1390,10 +1390,9 @@ Error findFunctionInSearchPath(const json::JsonRpcRequest& request,
    return Success();
 }
 
-void onFileMonitorEnabled(const tcl::unique_tree<core::FileInfo>& files)
+void onFileMonitorEnabled(const std::vector<core::FileInfo>& files)
 {
-   s_projectIndex.enqueFiles(files.pre_order_begin(),
-                             files.pre_order_end());
+   s_projectIndex.enqueFiles(files.begin(), files.end());
 }
 
 void onFilesChanged(const std::vector<core::system::FileChangeEvent>& events)

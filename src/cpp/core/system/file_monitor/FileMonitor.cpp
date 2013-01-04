@@ -582,13 +582,13 @@ void fileMonitorThreadMain()
 
 void enqueOnRegistered(const Callbacks& callbacks,
                        Handle handle,
-                       const tcl::unique_tree<FileInfo>& fileTree)
+                       const std::vector<FileInfo>& files)
 {
    if (callbacks.onRegistered)
    {
       callbackQueue().enque(boost::bind(callbacks.onRegistered,
                                         handle,
-                                        fileTree));
+                                        files));
    }
 }
 

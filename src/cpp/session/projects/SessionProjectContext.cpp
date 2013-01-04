@@ -377,8 +377,10 @@ void ProjectContext::onDeferredInit(bool newSession)
 
 void ProjectContext::fileMonitorRegistered(
                               core::system::file_monitor::Handle handle,
-                              const tcl::unique_tree<core::FileInfo>& files)
+                              const std::vector<core::FileInfo>& files)
 {
+   std::cerr << "Project file monitor registered" << std::endl;
+
    // update state
    hasFileMonitor_ = true;
 
