@@ -312,7 +312,7 @@ Error processEvent(FileEventContext* pContext,
       // get an iterator to the parent dir
       FileInfo parentDir(watch.path, true);
       tcl::unique_tree<FileInfo>::tree_type* pParentNode
-                           = impl::findNode(pContext->fileTree, parentDir);
+                           = impl::findNode(&pContext->fileTree, parentDir);
 
       // if we can't find a parent then return (this directory may have
       // been excluded from scanning due to a filter)
