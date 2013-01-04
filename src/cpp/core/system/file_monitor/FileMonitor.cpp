@@ -314,18 +314,8 @@ Error discoverAndProcessFileChanges(
       // fire events
       onFilesChanged(fileChanges);
 
-      // wholesale replace subtree (special case for the node being
-      // the root of the tree)
-      if (pNode == pTree)
-      {
-         *pTree = subdirTree;
-      }
-      else
-      {
-         tcl::unique_tree<FileInfo>::tree_type* pParent = pNode->parent();
-         pParent->erase(*pNode->get());
-         pParent->insert(subdirTree);
-      }
+      // wholesale replace subtree
+      pNode->swap(subdirTree);
    }
    else
    {
