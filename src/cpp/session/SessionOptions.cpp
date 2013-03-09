@@ -176,7 +176,7 @@ core::ProgramStatus Options::read(int argc, char * const argv[])
          value<std::string>(&sessionPackagesPath_)->default_value("R/packages"),
          "R library path")
       ("r-libs-user",
-         value<std::string>(&rLibsUser_)->default_value("~/R/library"),
+         value<std::string>(&rLibsUser_)->default_value(""),
          "R user library path")
       ("r-cran-repos",
          value<std::string>(&rCRANRepos_)->default_value(""),
