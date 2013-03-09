@@ -134,9 +134,9 @@ public:
       return core::FilePath(modulesRSourcePath_.c_str()); 
    }
 
-   core::FilePath sessionPackagesPath() const
+   core::FilePath sessionLibraryPath() const
    {
-      return core::FilePath(sessionPackagesPath_.c_str());
+      return core::FilePath(sessionLibraryPath_.c_str());
    }
    
    std::string rLibsUser() const
@@ -316,7 +316,7 @@ private:
    // r
    std::string coreRSourcePath_;
    std::string modulesRSourcePath_;
-   std::string sessionPackagesPath_;
+   std::string sessionLibraryPath_;
    std::string rLibsUser_;
    std::string rCRANRepos_;
    bool autoReloadSource_ ;
