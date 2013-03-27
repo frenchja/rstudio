@@ -23,7 +23,6 @@
 
 #include <boost/foreach.hpp>
 
-#include <QtGui/QFileDialog>
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QApplication>

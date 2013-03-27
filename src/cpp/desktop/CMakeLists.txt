@@ -25,12 +25,19 @@ set(QT_VERSION 5.0)
 if(NOT WIN32)
    # prefer rstudio qtsdk install then home qtsdk install
    if(NOT QT_QMAKE_EXECUTABLE)
-      set(QMAKE_QT50_SDK "/opt/RStudio-QtSDK/Desktop/Qt/4.8.0/gcc")
+      set(QT_VERSION "5.0.2")
+      if(APPLE)
+         set(QT_COMPILER "clang_64")
+      else()
+         set(QT_COMPILER "gcc_64")
+      endif()
+
+      set(QMAKE_QT50_SDK "/opt/RStudio-QtSDK/${QT_VERSION}/${QT_COMPILER}")
       if(EXISTS ${QMAKE_QT50_SDK})
          set(QT_QMAKE_EXECUTABLE "${QMAKE_QT50_SDK}/bin/qmake")
          set(CMAKE_PREFIX_PATH "${QMAKE_QT50_SDK}/lib/cmake")
       else()
-         set(QMAKE_QT50_SDK "$ENV{HOME}/Qt5.0.2/5.0.2/clang_64")
+         set(QMAKE_QT50_SDK "$ENV{HOME}/Qt${QT_VERSION}/${QT_VERSION}/${QT_COMPILER}")
          if(EXISTS ${QMAKE_QT50_SDK})
             set(QT_QMAKE_EXECUTABLE "${QMAKE_QT50_SDK}/bin/qmake")
             set(CMAKE_PREFIX_PATH "${QMAKE_QT50_SDK}/lib/cmake")
@@ -263,6 +270,12 @@ if(NOT APPLE)
       ${DESKTOP_UI_SOURCES}
    )
 
+   if(WIN32)
+      qt5_use_modules(rstudio Core Widgets Gui Network WebKit WebKitWidgets)
+   else()
+      qt5_use_modules(rstudio Core Widgets Gui Network WebKit WebKitWidgets DBus)
+   endif()
+
    # add rpath for linux so we can find qt libraries in our bin dir
    if(UNIX AND RSTUDIO_BUNDLE_QT)
       set_target_properties(rstudio PROPERTIES
@@ -301,6 +314,8 @@ else()
       ${DESKTOP_UI_SOURCES}
       ${ICNS_FILES})
 
+   qt5_use_modules(RStudio Core Widgets Gui Network WebKit WebKitWidgets)
+
    target_link_libraries(RStudio
       ${QT_LIBRARIES}
       rstudio-core
@@ -308,8 +323,6 @@ else()
       ${COCOA_LIBRARY})
 
 endif()
-
-qt5_use_modules(RStudio Core Widgets GUI Network WebKit WebKitWidgets)
 
 
 # install target (OSX install goes into the bundle)

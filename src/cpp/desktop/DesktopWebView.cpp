@@ -17,6 +17,10 @@
 #include <QNetworkRequest>
 #include <QNetworkReply>
 #include <QTemporaryFile>
+
+
+#include <QStyleFactory>
+
 #include <core/system/System.hpp>
 #include <core/system/Environment.hpp>
 #include "DesktopDownloadHelper.hpp"
@@ -33,7 +37,7 @@ WebView::WebView(QUrl baseUrl, QWidget *parent) :
 {
 #ifdef Q_OS_LINUX
    if (!core::system::getenv("KDE_FULL_SESSION").empty())
-      setStyle(new QPlastiqueStyle());
+      setStyle(QStyleFactory::create(QString::fromUtf8("fusion")));
 #endif
    pWebPage_ = new WebPage(baseUrl, this);
    setPage(pWebPage_);

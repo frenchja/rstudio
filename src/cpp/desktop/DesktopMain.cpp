@@ -15,6 +15,7 @@
 
 #include <QtGui>
 #include <QtWebKit>
+#include <QPushButton>
 
 #include <boost/bind.hpp>
 #include <boost/function.hpp>

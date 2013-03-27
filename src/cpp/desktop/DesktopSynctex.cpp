@@ -79,7 +79,7 @@ SynctexViewerInfo discoverViewer()
    if (boost::regex_match(stdOut, match, re))
    {
       SynctexViewerInfo sv;
-      sv.name = QString::fromAscii("Evince");
+      sv.name = QString::fromUtf8("Evince");
       sv.versionMajor = safe_convert::stringTo<int>(match[1], 2);
       sv.versionMinor = safe_convert::stringTo<int>(match[2], 0);
       sv.versionPatch = safe_convert::stringTo<int>(match[3], 0);
