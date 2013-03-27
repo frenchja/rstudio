@@ -31,7 +31,7 @@ WebView::WebView(QUrl baseUrl, QWidget *parent) :
     QWebView(parent),
     baseUrl_(baseUrl)
 {
-#ifdef Q_WS_X11
+#ifdef Q_OS_LINUX
    if (!core::system::getenv("KDE_FULL_SESSION").empty())
       setStyle(new QPlastiqueStyle());
 #endif
@@ -75,8 +75,8 @@ QString WebView::promptForFilename(const QNetworkRequest& request,
    // default, if present.
    if (pReply && pReply->hasRawHeader("content-disposition"))
    {
-      QString headerValue = QString::fromAscii(pReply->rawHeader("content-disposition"));
-      QRegExp regexp(QString::fromAscii("filename=(.+)"), Qt::CaseInsensitive);
+      QString headerValue = QString::fromUtf8(pReply->rawHeader("content-disposition"));
+      QRegExp regexp(QString::fromUtf8("filename=(.+)"), Qt::CaseInsensitive);
       if (regexp.indexIn(headerValue) >= 0)
       {
          defaultFileName = regexp.cap(1);
@@ -98,7 +98,7 @@ void WebView::keyPressEvent(QKeyEvent* pEv)
 #ifndef _WIN32
    if (pEv->key() == 'W')
    {
-#ifdef Q_WS_MAC
+#ifdef Q_OS_MAC
       Qt::KeyboardModifier modifier = Qt::MetaModifier;
 #else
       Qt::KeyboardModifier modifier = Qt::ControlModifier;
@@ -117,7 +117,7 @@ void WebView::keyPressEvent(QKeyEvent* pEv)
   
    Qt::KeyboardModifiers modifiers;
   
-#ifdef Q_WS_MAC
+#ifdef Q_OS_MAC
    if ((pEv->nativeModifiers() & 0x40101) == 0x40101) {
       modifiers &= ~Qt::MetaModifier;
       modifiers |= Qt::ControlModifier;
@@ -174,7 +174,7 @@ void WebView::unsupportedContent(QNetworkReply* pReply)
 
    QString contentType =
          pReply->header(QNetworkRequest::ContentTypeHeader).toString();
-   if (contentType.contains(QRegExp(QString::fromAscii("^\\s*application/pdf($|;)"),
+   if (contentType.contains(QRegExp(QString::fromUtf8("^\\s*application/pdf($|;)"),
                                     Qt::CaseInsensitive)))
    {
       core::FilePath dir(options().scratchTempDir());
@@ -224,14 +224,14 @@ void WebView::unsupportedContent(QNetworkReply* pReply)
 void WebView::openFile(QString fileName)
 {
    // force use of Preview for PDFs on the Mac (Adobe Reader 10.01 crashes)
-#ifdef Q_WS_MAC
-   if (fileName.toLower().endsWith(QString::fromAscii(".pdf")))
+#ifdef Q_OS_MAC
+   if (fileName.toLower().endsWith(QString::fromUtf8(".pdf")))
    {
       QStringList args;
-      args.append(QString::fromAscii("-a"));
-      args.append(QString::fromAscii("Preview"));
+      args.append(QString::fromUtf8("-a"));
+      args.append(QString::fromUtf8("Preview"));
       args.append(fileName);
-      QProcess::startDetached(QString::fromAscii("open"), args);
+      QProcess::startDetached(QString::fromUtf8("open"), args);
       return;
    }
 #endif

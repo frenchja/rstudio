@@ -15,8 +15,8 @@
 
 project(DESKTOP)
 
-# require Qt 4.8
-set(QT_VERSION 4.8.0)
+# require Qt 5.0
+set(QT_VERSION 5.0)
 
 # on unix prefer qtsdk installs over system-level libraries. note this
 # can be overriden by defining QT_QMAKE_EXECUTABLE when invoking cmake
@@ -27,7 +27,7 @@ if(NOT WIN32)
       if(EXISTS ${QMAKE_QT48_SDK})
          set(QT_QMAKE_EXECUTABLE ${QMAKE_QT48_SDK})
       else()
-         set(QMAKE_QT48_SDK "$ENV{HOME}/QtSDK/Desktop/Qt/4.8.0/gcc/bin/qmake")
+         set(QMAKE_QT48_SDK "$ENV{HOME}/Qt5.0.2/5.0.2/clang_64/bin/qmake")
          if(EXISTS ${QMAKE_QT48_SDK})
             set(QT_QMAKE_EXECUTABLE ${QMAKE_QT48_SDK})
          endif()
@@ -44,12 +44,19 @@ endif()
 
 # find and include Qt
 add_definitions(-DQT_NO_CAST_FROM_ASCII -DQT_NO_CAST_TO_ASCII)
-list(APPEND RSTUDIO_QT_COMPONENTS QtCore QtGui QtNetwork QtWebKit)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+find_package(Qt5Core REQUIRED)
+find_package(Qt5Widgets REQUIRED)
+find_package(Qt5Gui REQUIRED)
+find_package(Qt5Network REQUIRED)
+find_package(Qt5WebKit REQUIRED)
+find_package(Qt5WebKitWidgets REQUIRED)
 if(UNIX AND NOT APPLE)
-   list(APPEND RSTUDIO_QT_COMPONENTS QtDBus)
+   find_package(Qt5DBus REQUIRED)
 endif()
-find_package(Qt4 ${QT_VERSION} COMPONENTS ${RSTUDIO_QT_COMPONENTS} REQUIRED)
-include(${QT_USE_FILE})
+
+
 
 # disable clang warnings for qt sources
 if(APPLE)
@@ -175,8 +182,8 @@ include_directories(
 )
 
 # ensure moc files are generated
-qt4_wrap_cpp(MOC_DESKTOP_SOURCE_FILES ${MOC_DESKTOP_HEADER_FILES})
-qt4_wrap_ui(DESKTOP_UI_SOURCES
+qt5_wrap_cpp(MOC_DESKTOP_SOURCE_FILES ${MOC_DESKTOP_HEADER_FILES})
+qt5_wrap_ui(DESKTOP_UI_SOURCES
    DesktopAboutDialog.ui
    DesktopChooseRHome.ui
    DesktopInputDialog.ui
@@ -184,7 +191,7 @@ qt4_wrap_ui(DESKTOP_UI_SOURCES
 )
 
 set(DESKTOP_RESOURCES_FILES desktop.qrc)
-qt4_add_resources(DESKTOP_RESOURCES_SOURCES ${DESKTOP_RESOURCES_FILES})
+qt5_add_resources(DESKTOP_RESOURCES_SOURCES ${DESKTOP_RESOURCES_FILES})
 
 if(WIN32)
 
@@ -296,6 +303,9 @@ else()
       ${COCOA_LIBRARY})
 
 endif()
+
+qt5_use_modules(RStudio Core Widgets GUI Network WebKit WebKitWidgets)
+
 
 # install target (OSX install goes into the bundle)
 if(APPLE)
