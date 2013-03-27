@@ -13,6 +13,8 @@
 #
 #
 
+cmake_minimum_required(VERSION 2.8.8)
+
 project(DESKTOP)
 
 # require Qt 5.0
@@ -23,21 +25,24 @@ set(QT_VERSION 5.0)
 if(NOT WIN32)
    # prefer rstudio qtsdk install then home qtsdk install
    if(NOT QT_QMAKE_EXECUTABLE)
-      set(QMAKE_QT48_SDK "/opt/RStudio-QtSDK/Desktop/Qt/4.8.0/gcc/bin/qmake")
-      if(EXISTS ${QMAKE_QT48_SDK})
-         set(QT_QMAKE_EXECUTABLE ${QMAKE_QT48_SDK})
+      set(QMAKE_QT50_SDK "/opt/RStudio-QtSDK/Desktop/Qt/4.8.0/gcc")
+      if(EXISTS ${QMAKE_QT50_SDK})
+         set(QT_QMAKE_EXECUTABLE "${QMAKE_QT50_SDK}/bin/qmake")
+         set(CMAKE_PREFIX_PATH "${QMAKE_QT50_SDK}/lib/cmake")
       else()
-         set(QMAKE_QT48_SDK "$ENV{HOME}/Qt5.0.2/5.0.2/clang_64/bin/qmake")
-         if(EXISTS ${QMAKE_QT48_SDK})
-            set(QT_QMAKE_EXECUTABLE ${QMAKE_QT48_SDK})
+         set(QMAKE_QT50_SDK "$ENV{HOME}/Qt5.0.2/5.0.2/clang_64")
+         if(EXISTS ${QMAKE_QT50_SDK})
+            set(QT_QMAKE_EXECUTABLE "${QMAKE_QT50_SDK}/bin/qmake")
+            set(CMAKE_PREFIX_PATH "${QMAKE_QT50_SDK}/lib/cmake")
          endif()
       endif()
    endif()
 else()
    if(NOT QT_QMAKE_EXECUTABLE)
-      set(QMAKE_QT48_SDK "C:\\Qt\\4.8.3\\bin\\qmake.exe")
-      if(EXISTS ${QMAKE_QT48_SDK})
-         set(QT_QMAKE_EXECUTABLE ${QMAKE_QT48_SDK})
+      set(QMAKE_QT50_SDK "C:\\Qt\\4.8.3")
+      if(EXISTS ${QMAKE_QT50_SDK})
+         set(QT_QMAKE_EXECUTABLE "${QMAKE_QT50_SDK}\\bin\\qmake.exe")
+         set(CMAKE_PREFIX_PATH "${QMAKE_QT50_SDK}\\lib\\cmake")
       endif()
    endif()
 endif()
@@ -348,8 +353,13 @@ if(RSTUDIO_BUNDLE_QT)
                        "${QT_IMAGEFORMATS_DIR}/qtiff${LIB_SUFFIX}.dll"
               DESTINATION ${QTPLUGINS_DEST_DIR}/plugins/imageformats)
    else()
-      install(DIRECTORY "${QT_PLUGINS_DIR}/imageformats"
+      install(DIRECTORY "${Qt5Core_DIR}/../../../plugins/imageformats"
               DESTINATION ${QTPLUGINS_DEST_DIR}/plugins
+              PATTERN "*_debug.*" EXCLUDE
+              PATTERN "*.a" EXCLUDE)
+      install(DIRECTORY "${Qt5Core_DIR}/../../../plugins/platforms"
+              DESTINATION ${QTPLUGINS_DEST_DIR}/plugins
+              PATTERN "*_debug.*" EXCLUDE
               PATTERN "*.a" EXCLUDE)
    endif()
 
