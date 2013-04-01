@@ -17,8 +17,8 @@ cmake_minimum_required(VERSION 2.8.8)
 
 project(DESKTOP)
 
-# require Qt 5.0
-set(QT_VERSION 5.0)
+# require Qt 5.0.2
+set(QT_VERSION 5.0.2)
 
 # on unix prefer qtsdk installs over system-level libraries. note this
 # can be overriden by defining QT_QMAKE_EXECUTABLE when invoking cmake
