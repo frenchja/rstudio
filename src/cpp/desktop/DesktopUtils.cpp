@@ -206,8 +206,8 @@ void openUrl(const QUrl& url)
    // we allow default handling for  mailto and file schemes because qt
    // does custom handling for them and they aren't affected by the chrome
    //job object issue noted above
-   if (url.scheme() == QString::fromAscii("mailto") ||
-       url.scheme() == QString::fromAscii("file"))
+   if (url.scheme() == QString::fromUtf8("mailto") ||
+       url.scheme() == QString::fromUtf8("file"))
    {
       QDesktopServices::openUrl(url);
    }

@@ -339,9 +339,9 @@ endif()
 if(RSTUDIO_BUNDLE_QT)
    # set lib suffix for windows
    if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-      set(LIB_SUFFIX "d4")
+      set(LIB_SUFFIX "d")
    else()
-      set(LIB_SUFFIX "4")
+      set(LIB_SUFFIX "")
    endif()
 
    # install qt conf
@@ -357,7 +357,7 @@ if(RSTUDIO_BUNDLE_QT)
 
    # copy qt plugins
    if(WIN32)
-      set(QT_IMAGEFORMATS_DIR "${QT_PLUGINS_DIR}/imageformats")
+      set(QT_IMAGEFORMATS_DIR "${Qt5Core_DIR}/../../../plugins/imageformats")
       install(PROGRAMS "${QT_IMAGEFORMATS_DIR}/qgif${LIB_SUFFIX}.dll"
                        "${QT_IMAGEFORMATS_DIR}/qico${LIB_SUFFIX}.dll"
                        "${QT_IMAGEFORMATS_DIR}/qjpeg${LIB_SUFFIX}.dll"
@@ -366,6 +366,11 @@ if(RSTUDIO_BUNDLE_QT)
                        "${QT_IMAGEFORMATS_DIR}/qtga${LIB_SUFFIX}.dll"
                        "${QT_IMAGEFORMATS_DIR}/qtiff${LIB_SUFFIX}.dll"
               DESTINATION ${QTPLUGINS_DEST_DIR}/plugins/imageformats)
+
+      set(QT_PLATFORMS_DIR "${Qt5Core_DIR}/../../../plugins/platforms")
+      install(PROGRAMS "${QT_PLATFORMS_DIR}/qminimal${LIB_SUFFIX}.dll"
+                       "${QT_PLATFORMS_DIR}/qwindows${LIB_SUFFIX}.dll"
+              DESTINATION "${QTPLUGINS_DEST_DIR}/plugins/platforms")
    else()
       install(DIRECTORY "${Qt5Core_DIR}/../../../plugins/imageformats"
               DESTINATION ${QTPLUGINS_DEST_DIR}/plugins
@@ -435,15 +440,33 @@ if(RSTUDIO_BUNDLE_QT)
               DESTINATION ${RSTUDIO_INSTALL_BIN})
    # copy qt dlls directly to bin on win32
    elseif(WIN32)
-      install(PROGRAMS ${QT_BINARY_DIR}/QtCore${LIB_SUFFIX}.dll
-                       ${QT_BINARY_DIR}/QtGui${LIB_SUFFIX}.dll
-                       ${QT_BINARY_DIR}/QtNetwork${LIB_SUFFIX}.dll
-                       ${QT_BINARY_DIR}/QtWebKit${LIB_SUFFIX}.dll
-                       ${QT_BINARY_DIR}/QtSvg${LIB_SUFFIX}.dll
-                       ${QT_BINARY_DIR}/QtXml${LIB_SUFFIX}.dll
-                       ${QT_BINARY_DIR}/phonon${LIB_SUFFIX}.dll
-                       ${QT_BINARY_DIR}/mingwm10.dll
-                       ${QT_BINARY_DIR}/libgcc_s_dw2-1.dll
+      set(QT_BINARY_DIR "${Qt5Core_DIR}/../../../bin")
+      install(PROGRAMS ${QT_BINARY_DIR}/Qt5Core${LIB_SUFFIX}.dll
+                       ${QT_BINARY_DIR}/Qt5Gui${LIB_SUFFIX}.dll
+                       ${QT_BINARY_DIR}/Qt5Network${LIB_SUFFIX}.dll
+                       ${QT_BINARY_DIR}/Qt5Widgets${LIB_SUFFIX}.dll
+                       ${QT_BINARY_DIR}/Qt5WebKit${LIB_SUFFIX}.dll
+                       ${QT_BINARY_DIR}/Qt5WebKitWidgets${LIB_SUFFIX}.dll
+                       ${QT_BINARY_DIR}/Qt5PrintSupport${LIB_SUFFIX}.dll
+                       ${QT_BINARY_DIR}/Qt5Svg${LIB_SUFFIX}.dll
+                       ${QT_BINARY_DIR}/Qt5Xml${LIB_SUFFIX}.dll
+                       ${QT_BINARY_DIR}/Qt5XmlPatterns${LIB_SUFFIX}.dll
+                       ${QT_BINARY_DIR}/Qt5Quick${LIB_SUFFIX}.dll
+                       ${QT_BINARY_DIR}/Qt5Qml${LIB_SUFFIX}.dll
+                       ${QT_BINARY_DIR}/Qt5Sql${LIB_SUFFIX}.dll
+                       ${QT_BINARY_DIR}/Qt5OpenGL${LIB_SUFFIX}.dll
+                       ${QT_BINARY_DIR}/Qt5V8${LIB_SUFFIX}.dll
+                       ${QT_BINARY_DIR}/Qt5Multimedia${LIB_SUFFIX}.dll
+                       ${QT_BINARY_DIR}/Qt5MultimediaWidgets${LIB_SUFFIX}.dll
+                       ${QT_BINARY_DIR}/libEGL${LIB_SUFFIX}.dll
+                       ${QT_BINARY_DIR}/libGLESv2${LIB_SUFFIX}.dll
+                       ${QT_BINARY_DIR}/icudt49.dll
+                       ${QT_BINARY_DIR}/icuin49.dll
+                       ${QT_BINARY_DIR}/icuuc49.dll
+                       ${QT_BINARY_DIR}/libwinpthread-1.dll
+                       ${QT_BINARY_DIR}/libstdc++-6.dll
+                       ${QT_BINARY_DIR}/D3DCompiler_43.dll
+                       ${QT_BINARY_DIR}/libgcc_s_sjlj-1.dll
               DESTINATION ${RSTUDIO_INSTALL_BIN})
    endif()
 endif(RSTUDIO_BUNDLE_QT)

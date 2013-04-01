@@ -206,7 +206,7 @@ QString GwtCallback::getExistingDirectory(const QString& caption,
       // Bug
       wchar_t szDir[MAX_PATH];
       BROWSEINFOW bi;
-      bi.hwndOwner = pOwner_->asWidget()->winId();
+      bi.hwndOwner = (HWND)(pOwner_->asWidget()->winId());
       bi.pidlRoot = NULL;
       bi.pszDisplayName = szDir;
       bi.lpszTitle = L"Select a folder:";

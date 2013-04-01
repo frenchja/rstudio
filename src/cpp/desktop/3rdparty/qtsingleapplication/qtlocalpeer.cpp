@@ -87,7 +87,7 @@ QtLocalPeer::QtLocalPeer(QObject* parent, const QString &appId)
 
 #if defined(Q_OS_WIN)
     if (!pProcessIdToSessionId) {
-        QLibrary lib(QString::fromAscii("kernel32"));
+        QLibrary lib(QString::fromUtf8("kernel32"));
         pProcessIdToSessionId = (PProcessIdToSessionId)lib.resolve("ProcessIdToSessionId");
     }
     if (pProcessIdToSessionId) {
