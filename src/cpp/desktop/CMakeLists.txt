@@ -392,27 +392,47 @@ if(RSTUDIO_BUNDLE_QT)
    # copy qt shared objects directly to bin on unix (fixed up rpath above)
    elseif(UNIX)
       # install dependent libraries
-      set(QT_FULL_VERSION "${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}.${QT_VERSION_PATCH}")
-      install(PROGRAMS ${QT_LIBRARY_DIR}/libQtCore.so.4
-                       ${QT_LIBRARY_DIR}/libQtCore.so.${QT_FULL_VERSION}
-                       ${QT_LIBRARY_DIR}/libQtDBus.so.4
-                       ${QT_LIBRARY_DIR}/libQtDBus.so.${QT_FULL_VERSION}
-                       ${QT_LIBRARY_DIR}/libQtGui.so.4
-                       ${QT_LIBRARY_DIR}/libQtGui.so.${QT_FULL_VERSION}
-                       ${QT_LIBRARY_DIR}/libQtNetwork.so.4
-                       ${QT_LIBRARY_DIR}/libQtNetwork.so.${QT_FULL_VERSION}
-                       ${QT_LIBRARY_DIR}/libQtWebKit.so.4
-                       ${QT_LIBRARY_DIR}/libQtWebKit.so.4.9.0
-                       ${QT_LIBRARY_DIR}/libQtSvg.so.4
-                       ${QT_LIBRARY_DIR}/libQtSvg.so.${QT_FULL_VERSION}
-                       ${QT_LIBRARY_DIR}/libQtXml.so.4
-                       ${QT_LIBRARY_DIR}/libQtXml.so.${QT_FULL_VERSION}
-                       ${QT_LIBRARY_DIR}/libQtXmlPatterns.so.4
-                       ${QT_LIBRARY_DIR}/libQtXmlPatterns.so.${QT_FULL_VERSION}
-                       ${QT_LIBRARY_DIR}/libphonon.so.4
-                       ${QT_LIBRARY_DIR}/libphonon.so.4.4.0
+      set(QT_LIBRARY_DIR "${Qt5Core_DIR}/../../../lib")
+      set(QT_FULL_VERSION "5.0.2")
+      install(PROGRAMS ${QT_LIBRARY_DIR}/libQt5Core.so.5
+                       ${QT_LIBRARY_DIR}/libQt5Core.so.${QT_FULL_VERSION}
+                       ${QT_LIBRARY_DIR}/libQt5DBus.so.5
+                       ${QT_LIBRARY_DIR}/libQt5DBus.so.${QT_FULL_VERSION}
+                       ${QT_LIBRARY_DIR}/libQt5Gui.so.5
+                       ${QT_LIBRARY_DIR}/libQt5Gui.so.${QT_FULL_VERSION}
+                       ${QT_LIBRARY_DIR}/libQt5Network.so.5
+                       ${QT_LIBRARY_DIR}/libQt5Network.so.${QT_FULL_VERSION}
+                       ${QT_LIBRARY_DIR}/libQt5Widgets.so.5
+                       ${QT_LIBRARY_DIR}/libQt5Widgets.so.${QT_FULL_VERSION}
+                       ${QT_LIBRARY_DIR}/libQt5WebKit.so.5
+                       ${QT_LIBRARY_DIR}/libQt5WebKit.so.${QT_FULL_VERSION}
+                       ${QT_LIBRARY_DIR}/libQt5WebKitWidgets.so.5
+                       ${QT_LIBRARY_DIR}/libQt5WebKitWidgets.so.${QT_FULL_VERSION}
+                       ${QT_LIBRARY_DIR}/libQt5PrintSupport.so.5
+                       ${QT_LIBRARY_DIR}/libQt5PrintSupport.so.${QT_FULL_VERSION}
+                       ${QT_LIBRARY_DIR}/libQt5Svg.so.5
+                       ${QT_LIBRARY_DIR}/libQt5Svg.so.${QT_FULL_VERSION}
+                       ${QT_LIBRARY_DIR}/libQt5Xml.so.5
+                       ${QT_LIBRARY_DIR}/libQt5Xml.so.${QT_FULL_VERSION}
+                       ${QT_LIBRARY_DIR}/libQt5XmlPatterns.so.5
+                       ${QT_LIBRARY_DIR}/libQt5XmlPatterns.so.${QT_FULL_VERSION}
+                       ${QT_LIBRARY_DIR}/libQt5Quick.so.5
+                       ${QT_LIBRARY_DIR}/libQt5Quick.so.${QT_FULL_VERSION}
+                       ${QT_LIBRARY_DIR}/libQt5Qml.so.5
+                       ${QT_LIBRARY_DIR}/libQt5Qml.so.${QT_FULL_VERSION}
+                       ${QT_LIBRARY_DIR}/libQt5Sql.so.5
+                       ${QT_LIBRARY_DIR}/libQt5Sql.so.${QT_FULL_VERSION}
+                       ${QT_LIBRARY_DIR}/libQt5OpenGL.so.5
+                       ${QT_LIBRARY_DIR}/libQt5OpenGL.so.${QT_FULL_VERSION}
+                       ${QT_LIBRARY_DIR}/libQt5V8.so.5
+                       ${QT_LIBRARY_DIR}/libQt5V8.so.${QT_FULL_VERSION}
+                       ${QT_LIBRARY_DIR}/libicui18n.so.49
+                       ${QT_LIBRARY_DIR}/libicui18n.so.49.1.2
+                       ${QT_LIBRARY_DIR}/libicuuc.so.49
+                       ${QT_LIBRARY_DIR}/libicuuc.so.49.1.2
+                       ${QT_LIBRARY_DIR}/libicudata.so.49
+                       ${QT_LIBRARY_DIR}/libicudata.so.49.1.2
               DESTINATION ${RSTUDIO_INSTALL_BIN})
-
    # copy qt dlls directly to bin on win32
    elseif(WIN32)
       install(PROGRAMS ${QT_BINARY_DIR}/QtCore${LIB_SUFFIX}.dll
