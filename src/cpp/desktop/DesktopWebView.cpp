@@ -102,15 +102,24 @@ void WebView::keyPressEvent(QKeyEvent* pEv)
 #ifndef _WIN32
    if (pEv->key() == 'W')
    {
-#ifdef Q_OS_MAC
-      Qt::KeyboardModifier modifier = Qt::MetaModifier;
-#else
-      Qt::KeyboardModifier modifier = Qt::ControlModifier;
+      // check modifier and emit signal
+      if (pEv->modifiers() & Qt::ControlModifier)
+         onCloseWindowShortcut();
+   }
 #endif
 
-      // check modifier and emit signal
-      if (pEv->modifiers() & modifier)
-         onCloseWindowShortcut();
+  // flip control and meta on the mac
+#ifdef Q_OS_MAC
+   Qt::KeyboardModifiers modifiers = pEv->modifiers();
+   if (modifiers & Qt::MetaModifier && !(modifiers & Qt::ControlModifier))
+   {
+      modifiers &= ~Qt::MetaModifier;
+      modifiers |= Qt::ControlModifier;
+   }
+   else if (modifiers & Qt::ControlModifier && !(modifiers & Qt::MetaModifier))
+   {
+      modifiers &= ~Qt::ControlModifier;
+      modifiers |= Qt::MetaModifier;
    }
 #endif
 
@@ -118,23 +127,6 @@ void WebView::keyPressEvent(QKeyEvent* pEv)
    // presses resulting in keyCode=0 in the DOM's keydown events.
    // This is due to some missing switch cases in the case
    // where the keypad modifier bit is on, so we turn it off.
-  
-   Qt::KeyboardModifiers modifiers;
-  
-#ifdef Q_OS_MAC
-   if ((pEv->nativeModifiers() & 0x40101) == 0x40101) {
-      modifiers &= ~Qt::MetaModifier;
-      modifiers |= Qt::ControlModifier;
-   } else if ((pEv->nativeModifiers() & 0x100108) == 0x100108) {
-      modifiers &= ~Qt::ControlModifier;
-      modifiers |= Qt::MetaModifier;
-   } else {
-#else
-   {
-#endif     
-     modifiers = pEv->modifiers();
-   }
-
    QKeyEvent newEv(pEv->type(),    
                    pEv->key(),
                    modifiers & ~Qt::KeypadModifier,
@@ -142,6 +134,7 @@ void WebView::keyPressEvent(QKeyEvent* pEv)
                    pEv->isAutoRepeat(),
                    pEv->count());
   
+   // delegate to base
    this->QWebView::keyPressEvent(&newEv);
 }
 
