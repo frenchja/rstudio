@@ -15,12 +15,28 @@ mkdir -p /etc/rstudio
 sh -c "echo `date +%s` > /etc/rstudio/installed"
 rstudio-server force-suspend-all
 
-# add and register init.d script and (re) start the server
-cp ${CMAKE_INSTALL_PREFIX}/extras/init.d/redhat/rstudio-server /etc/init.d/
-chmod +x /etc/init.d/rstudio-server
-chkconfig --add rstudio-server
-service rstudio-server stop
-service rstudio-server start
+# add upstart profile or init.d script and start the server
+# Protect against Fedora, which moved to systemd
+if [ "$(lsb_release -sr)" -ge "6" ]  && test -d /etc/init/ && [ "$(lsb_release -si)" -ne "Fedora" ]
+then
+   sudo cp ${CMAKE_INSTALL_PREFIX}/extras/upstart/rstudio-server.conf /etc/init/
+   sudo initctl reload-configuration
+   sudo initctl stop rstudio-server 2>/dev/null
+   sudo initctl start rstudio-server
+# Account for Upstart versions of Fedora 
+elif [ "$(lsb_release -si)" -eq "Fedora" ] && [ "$(lsb_release -sr)" -ge "9" ]  && [ "$(lsb_release -sr)" -lt "15" ] && test -d /etc/init/
+then
+   sudo cp ${CMAKE_INSTALL_PREFIX}/extras/upstart/rstudio-server.conf /etc/init/
+   sudo initctl reload-configuration
+   sudo initctl stop rstudio-server 2>/dev/null
+   sudo initctl start rstudio-server
+else
+  cp ${CMAKE_INSTALL_PREFIX}/extras/init.d/redhat/rstudio-server /etc/init.d/
+  chmod +x /etc/init.d/rstudio-server
+  chkconfig --add rstudio-server
+  service rstudio-server stop
+  service rstudio-server start
+fi
 
 # add pam profile
 if [ ! -e /etc/pam.d/rstudio ]
